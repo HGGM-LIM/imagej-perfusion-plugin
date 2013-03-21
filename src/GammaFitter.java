@@ -41,8 +41,6 @@ public class GammaFitter extends fitter {
 			tAxis[i] = i;
 
 		contAxis = cont;
-		t0 = MathUtils.minL(contAxis);
-		te = MathUtils.minR(contAxis);
 		fittedCont = new double[dim];
 	}
 
@@ -191,7 +189,7 @@ public class GammaFitter extends fitter {
 		boolean fitted;
 		// TODO
 		// EXCEPCION CON T0 NO ENCONTRADO
-		if (t0 > 0 && te > 0) {
+		if (t0 > 2 && te > 0) {
 			RealMatrix X = XMatrix();
 			RealVector Y = YVector();
 			RealVector B = leastSquareSVD(X, Y);
