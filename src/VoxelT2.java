@@ -130,6 +130,26 @@ public class VoxelT2 extends Voxel{
 		double max=StatUtils.max(contrastEstim);
 		MTT = StatUtils.sum(contrastEstim)/max;
 	}
+	
+	public boolean isNoisy(double k) {
+		
+		//double min = StatUtils.min(contrastRaw);
+		double minLoc = StatUtils.min(contrastRaw, (int) MMC, (int) (contrastRaw.length - MMC));
+		/*if (Double.compare(min, 0) != 0) {
+		double param = 1 - k*minLoc/min;
+		if (min < 0 && minLoc > 0){
+			return  param >2;
+		} else 
+			return param < 0 ;
+		} else
+			return minLoc*k >= min;*/
+		return FastMath.abs(minLoc) > StatUtils.max(contrastRaw) * k;
+			
+		
+		
+		
+		
+	}
 
 
 

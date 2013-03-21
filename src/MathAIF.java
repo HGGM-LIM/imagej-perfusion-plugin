@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -69,11 +70,12 @@ public class MathAIF {
 
 		}
 		System.out.println(StatUtils.max(MCs)+" "+MathUtils.whereIs(MCs, StatUtils.max(MCs)));
+		
 		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
-				StatUtils.max(MCs) * 0.5);
+				StatUtils.max(MCs) * 0.35);
 
 		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs);
-		 Vector<VoxelT2> posAIFs = new Vector<VoxelT2>();
+		 List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
 		for (int i = 0; i < probAIF.length; i++)
 			if (probAIF[i] == true)
 				posAIFs.add(voxels.get(biggerThanHMaxMC[i]));
@@ -85,8 +87,11 @@ public class MathAIF {
 
 	}
 	
-	public static double[] getAIF(List<VoxelT2> voxels) {
-		
+	
+	public static double[] getAIF(List<VoxelT2> voxels,boolean meaningVoxels) {	
+		if (meaningVoxels==true) 
+			return stimAIF(voxels);
+		else
 		return stimAIF(getAIFs(voxels));
 		
 	}
@@ -118,7 +123,8 @@ public class MathAIF {
 		boolean[] probAIF = new boolean[biggerThanHMaxMC.length];
 		int j = 0;
 		for (int i : biggerThanHMaxMC) {
-			if (FWHMs[i] <= (int) thrFWHM + 1 && (int) MMCs[i] <= (int) thrMMC) {
+			if (FWHMs[i] >= thrFWHM-1 && FWHMs[i] <=  (thrFWHM+1 ) &&  MMCs[i] >=  thrMMC-1 &&  MMCs[i] <=  thrMMC+1) {
+			
 				probAIF[j] = true;
 				anyCoincidence = true;
 			}

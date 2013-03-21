@@ -30,5 +30,10 @@ public class voxIterator extends ImagePlusHypIterator {
     	}
 	}
 	
+	public VoxelT2 next(double a) {
+		Voxel v = next();
+		return new VoxelT2(v.x,v.y,v.slice,v.tac);
+	}
+	
 
 }

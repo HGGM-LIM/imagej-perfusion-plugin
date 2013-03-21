@@ -1,3 +1,7 @@
+import java.util.List;
+
+import ij.IJ;
+
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -384,5 +388,25 @@ public class MathUtils {
 			return -1;
 		}
 	}
+	
+	public static double[] limitOutl(double[] values,double k) {
+		double[]result = new double[2];
+		double q1 = StatUtils.percentile(values, 5);
+		double q3 = StatUtils.percentile(values, 95);
+		result[0] = q1 - k*(q3-q1);
+		result[1] = q3 + k*(q3-q1);
+		
+		return result;
+		
+	}
+	
+	public static double[] limitOutlM(double[] values, double k) {
+		double[] result = new double[2];
+		result[0] = StatUtils.mean(values) - k*FastMath.sqrt(StatUtils.variance(values));
+		result[1] = StatUtils.mean(values) + k*FastMath.sqrt(StatUtils.variance(values));
+		
+		return result;
+	}
+		
 
 }
