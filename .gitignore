@@ -1,0 +1,13 @@
+.metadata
+*.class
+*.prefs
+*.jar
+*.zip
+*.xml
+*.classpath
+*.project
+Sense_Hyperstack.java
+StackAverage_.java
+exter_.java
+vecToImageSupe.java
+
