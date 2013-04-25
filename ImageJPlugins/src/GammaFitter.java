@@ -190,7 +190,7 @@ public class GammaFitter extends fitter {
 		boolean fitted;
 		// TODO
 		// EXCEPCION CON T0 NO ENCONTRADO
-		if (t0-1 > 0 && te > 0) {
+		if (t0 > 0 && te > 0) {
 			RealMatrix X = XMatrix();
 			RealVector Y = YVector();
 			RealVector B = leastSquareSVD(X, Y);

@@ -1,18 +1,13 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingConstants;
-import java.awt.Component;
-import javax.swing.Box;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -56,7 +51,7 @@ public class MainFrame extends JFrame {
 		comboFitting = new JComboBox();
 		comboFitting.setMaximumRowCount(10);
 		comboFitting.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 11));
-		comboFitting.setModel(new DefaultComboBoxModel(new String[] {"Auto", "NoFitter", "GammaFitter"}));
+		comboFitting.setModel(new DefaultComboBoxModel(new String[] {"Auto", "NoFitter", "GammaFitter","autoGamma"}));
 		comboFitting.setBounds(184, 11, 160, 20);
 		mainPanel.add(comboFitting);
 		

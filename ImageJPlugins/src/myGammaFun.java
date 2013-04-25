@@ -3,12 +3,12 @@ import org.apache.commons.math3.util.FastMath;
 
 
 public class myGammaFun implements ParametricUnivariateFunction {
+	private int t0;
 	/* params[0] = K;
 	 * params[1] = alfa;
 	 * params[2] = beta;
 	 */
-	private double[] params;
-	private double t0;
+	
 
 	public myGammaFun(int t0) {
 		// TODO Auto-generated constructor stub
@@ -37,9 +37,13 @@ public class myGammaFun implements ParametricUnivariateFunction {
 		double k =  arg1[0];
 		double alfa = arg1[1];
 		double beta = arg1[2];
-		double t = arg0 ;
+		double t = arg0 - t0;
+		
+		if (t > 0)
 		return  (k * FastMath.pow((t), alfa))
 				* FastMath.exp(-((t) / beta));
+		else
+			return 0;
 	
 		
 	}

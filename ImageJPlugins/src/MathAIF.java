@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
@@ -72,13 +70,16 @@ public class MathAIF {
 		System.out.println(StatUtils.max(MCs)+" "+MathUtils.whereIs(MCs, StatUtils.max(MCs)));
 		
 		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
-				StatUtils.max(MCs) * 0.35);
+				StatUtils.max(MCs) * 0.0);
 
-		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs);
+		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs,MCs);
 		 List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
 		for (int i = 0; i < probAIF.length; i++)
-			if (probAIF[i] == true)
+			if (probAIF[i] == true){
 				posAIFs.add(voxels.get(biggerThanHMaxMC[i]));
+				voxels.get(biggerThanHMaxMC[i]).AIFValid = true;
+				
+			}
 
 		return posAIFs;
 		/*Vector<Voxel> bacala = new Vector<Voxel>();
@@ -111,7 +112,8 @@ public class MathAIF {
 	 *         AIF, thus FWHM(AIF) = mean(FWHM) - 1.5 standard deviation (FWHM)
 	 */
 	private static boolean[] isAIF(int[] biggerThanHMaxMC, double[] MMCs,
-			double[] FWHMs) {
+			double[] FWHMs,double[] MCs) {
+		double maxMC = 0;
 		boolean anyCoincidence = false;
 		double meanMMC = StatUtils.mean(MMCs);
 		double thrMMC = meanMMC - 1.5
@@ -124,16 +126,26 @@ public class MathAIF {
 		int j = 0;
 		for (int i : biggerThanHMaxMC) {
 			if (FWHMs[i] >= thrFWHM-1 && FWHMs[i] <=  (thrFWHM+1 ) &&  MMCs[i] >=  thrMMC-1 &&  MMCs[i] <=  thrMMC+1) {
-			
+				
 				probAIF[j] = true;
 				anyCoincidence = true;
+				
+				if(MCs[i] > maxMC)
+					maxMC = MCs[i];
+				
 			}
 
 			j++;
 		}
-		if (anyCoincidence == false)
+		
+		for(int i = 0; i < probAIF.length; i++)
+			if(probAIF[i] == true && MCs[i] < 0.75 * maxMC)
+				probAIF[i] = false;
+				
+		
+		/*if (anyCoincidence == false)
 			for (int i =0; i < probAIF.length; i++)
-				probAIF[i] = true;
+				probAIF[i] = true;*/
 		
 		return probAIF;
 

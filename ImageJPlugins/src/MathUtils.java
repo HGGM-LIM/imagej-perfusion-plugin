@@ -1,7 +1,3 @@
-import java.util.List;
-
-import ij.IJ;
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -55,6 +51,21 @@ public class MathUtils {
 				result[i] = vec[i] - subs;
 		}
 		return result;
+	}
+	
+	/**
+	 * Sum a constant to a vector
+	 * @param vec 
+	 * @param sum the constant to be summed 
+	 * @return vec + sum
+	 */
+	public static double[] vecSum(double[] vec,double sum) {
+		double[] result = new double[vec.length];
+		for (int i = 0; i < vec.length; i++)
+			result[i] = vec[i] + sum;
+		
+		return result;
+					
 	}
 
 	/* Getting the amount of numbers bigger than a threshold */
@@ -120,8 +131,14 @@ public class MathUtils {
 		return result;
 	}
 
-	/* dsfdsf */
+	
 
+	/**
+	 * Find a value v into the values
+	 * @param vals
+	 * @param v
+	 * @return the position of v inside vals
+	 */
 	public static int whereIs(double[] vals, double v) {
 		for (int i = 0; i < vals.length; i++)
 			if (vals[i] == v)
@@ -131,6 +148,12 @@ public class MathUtils {
 
 	}
 
+	/**
+	 * 
+	 * @param values
+	 * @param trheshold
+	 * @return True where the values are bigger than the threshold
+	 */
 	public static boolean[] indBiggerThan(double[] values, double trheshold) {
 		boolean[] ind = new boolean[values.length];
 		for (int i = 0; i < values.length; i++)
@@ -140,6 +163,12 @@ public class MathUtils {
 		return ind;
 	}
 
+	/**
+	 * 
+	 * @param values
+	 * @param trheshold
+	 * @return indices where values are bigger than the threshold
+	 */
 	public static int[] findBiggerThan(double[] values, double trheshold) {
 		boolean[] ind = indBiggerThan(values, trheshold);
 		int[] result = new int[amountOnes(ind)];
@@ -152,7 +181,7 @@ public class MathUtils {
 	}
 
 	public static double getCBV(double[] con, double aif) {
-		return (StatUtils.sum(con)) / aif;
+		return (interBad(con)) / aif;
 
 	}
 
@@ -235,6 +264,12 @@ public class MathUtils {
 				g, false));
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @param prec
+	 * @return the number n rounded with the accuracy prec
+	 */
 	public static double round(double n, int prec) {
 		int p = (int) FastMath.pow(10, prec);
 		return FastMath.rint(n * p) / p;
@@ -269,16 +304,34 @@ public class MathUtils {
 
 	}
 
+	/**
+	 * 
+	 * @param aif low-triangular shifted matrix
+	 * @return the aif's pseudo-inverse by SVD
+	 */
 	public static double[][] pInvMon(double[][] aif) {
 		return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
 				false)).getSolver().getInverse().getData();
 	}
 
+	/**
+	 * 
+	 * @param coef
+	 * @param cons
+	 * @return coef*cons
+	 */
 	public static double[] multi(double[][] coef, double[] cons) {
 		return new Array2DRowRealMatrix(coef, false).operate(cons);
 
 	}
 
+	/**
+	 * 
+	 * @param max
+	 * @param tMax
+	 * @param vals
+	 * @return the located min before the spike
+	 */
 	public static int minL(double max, int tMax, double[] vals) {
 		int tMaxRel;
 		int ti = tMax - 1;
@@ -287,7 +340,7 @@ public class MathUtils {
 			while (located == false) {
 				while (vals[ti] > vals[ti - 1]
 						&& (vals[ti] - vals[ti - 1] <= FastMath
-								.abs(vals[ti - 1]) * 4))
+						.abs(vals[ti - 1]) * 4))
 					ti--;
 				tMaxRel = maxLFrom(ti, vals);
 				if (((max - vals[ti]) >= 0.5 * max || (vals[ti] - vals[ti - 1] >= vals[ti - 1] * 4))
@@ -304,7 +357,7 @@ public class MathUtils {
 			 * ti++;
 			 */
 
-			while (vals[ti + 1] < 0)
+			while (vals[ti + 1] <= 0)
 				ti++;
 
 			if (ti == tMax)
@@ -316,11 +369,23 @@ public class MathUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * @param vals
+	 * @return the located min before the spike
+	 */
 	public static int minL(double[] vals) {
 		return minL(StatUtils.max(vals),
 				MathUtils.whereIs(vals, StatUtils.max(vals)), vals);
 	}
 
+	/**
+	 * 
+	 * @param max
+	 * @param tMax
+	 * @param vals
+	 * @return the located min after the spike
+	 */
 	public static int minR(double max, int tMax, double[] vals) {
 
 		int tMaxRel;
@@ -358,6 +423,11 @@ public class MathUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * @param vals
+	 * @return  the located min after the spike
+	 */
 	public static int minR(double[] vals) {
 		return minR(StatUtils.max(vals),
 				MathUtils.whereIs(vals, StatUtils.max(vals)), vals);
@@ -389,6 +459,46 @@ public class MathUtils {
 		}
 	}
 	
+	public static int chinL (double[] vals,int ti) {
+		int tMax = MathUtils.whereIs(vals,StatUtils.max(vals));
+		while(ti < vals.length-3) {
+		int i = 0;
+		while (i < 3 && vals[ti+i] < vals [ti+i+1])
+			i++;
+		if (i == 3 && ti + 3 < tMax) {
+			if ( (vals[ti +1] / vals[ti]) - 1  >= 1 )
+				return ti;
+			else 
+				return ti + 1;
+		} else 
+			 ti++;
+		}
+		return -1;
+	}
+	
+	public static int chinR(double[] vals,int ti) {
+		int tMax = MathUtils.whereIs(vals,StatUtils.max(vals));
+		while(ti < vals.length -3) {
+		int i = 0;
+		while (i < 3 && vals[ti+i] > vals[ti+i+1])
+			i++;
+		if( i==3 && ti > tMax) {
+			if ( (vals[ti - 1] / vals[ti]) - 1  >= 1)
+				return ti;
+			else
+				return ti - 1;
+		} else
+			ti++;
+		}
+		return -1;
+	}
+	
+	/**
+	 * 
+	 * @param values
+	 * @param k
+	 * @return  inf limit and sup limit for identifying outliers
+	 */
 	public static double[] limitOutl(double[] values,double k) {
 		double[]result = new double[2];
 		double q1 = StatUtils.percentile(values, 5);
@@ -404,6 +514,14 @@ public class MathUtils {
 		double[] result = new double[2];
 		result[0] = StatUtils.mean(values) - k*FastMath.sqrt(StatUtils.variance(values));
 		result[1] = StatUtils.mean(values) + k*FastMath.sqrt(StatUtils.variance(values));
+		
+		return result;
+	}
+	
+	public static double interBad(double[] values) {
+		double result = 0;
+		for (int i = 0; i < values.length; i++)
+			result += FastMath.abs(values[i]);
 		
 		return result;
 	}
