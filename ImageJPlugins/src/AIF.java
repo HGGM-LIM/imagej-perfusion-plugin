@@ -14,17 +14,7 @@ public class AIF {
 	
 
 	public AIF(List<VoxelT2> AllVoxels) {
-		/* Contrast and important params */
-		/*for (int i = 0; i < nonAllVoxels.size(); ) {
-			 if(nonAllVoxels.get(i).x>=50 && nonAllVoxels.get(i).y >= 95 && nonAllVoxels.get(i).slice>=20){
-		    	 System.out.println();
-		     }
-			 boolean a= nonAllVoxels.get(i).isNoisy(0.15);
-			if (Double.compare(((VoxelT2) nonAllVoxels.get(i)).getFWHM(), Double.NaN) == 0 || Double.compare(nonAllVoxels.get(i).getFWHM(), 0) == 0 || nonAllVoxels.get(i).getMMC() > 17 )
-					nonAllVoxels.remove(i);	
-				else 
-					i++;	
-		}*/
+		
 		
 		//TODO añadir funcion MMC
 			AIFValid = new ArrayList<VoxelT2>();

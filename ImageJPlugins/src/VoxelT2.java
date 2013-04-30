@@ -236,11 +236,13 @@ public class VoxelT2 extends Voxel{
 		return FastMath.abs(minLoc) > StatUtils.max(contrastRaw) * k;
 	}
 	
-	public boolean isNoise() {
-		if (StrictMath.abs(StatUtils.min(contrastRaw)) >= StatUtils.max(contrastRaw))
-			return true;
-		return false;
+	//TODO
+	public boolean isMinimal(double max) {
+		
+		return MC > max*0.125;
 	}
+	
+	
 
 
 

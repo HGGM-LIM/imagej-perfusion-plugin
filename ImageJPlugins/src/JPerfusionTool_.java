@@ -11,7 +11,7 @@ import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
-public class Esquema_ implements PlugInFilter {
+public class JPerfusionTool_ implements PlugInFilter {
 	String path = IJ
 			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 	ImagePlus hyStack;
@@ -31,7 +31,7 @@ public class Esquema_ implements PlugInFilter {
 		int[] thresholds = new int[myHypStk.getNSlices()];
 		double max=0,maxAux=0;
 		VoxelT2 vMax=null;
-		int thr = myHypStk.getThreshold(15);
+		int thr = myHypStk.getThreshold(hyStack.getNSlices()/2);
 		for (int i = 1; i <= myHypStk.getNSlices();i++){
 			thresholds[i-1]=(int) (myHypStk.getThreshold(i));
 			thresholds[i-1] = thr;
@@ -51,15 +51,15 @@ public class Esquema_ implements PlugInFilter {
 				nonAllVoxels.add(v);
 			
 			//v.contrastRaw = MathUtils.vecSum(v.contrastRaw, FastMath.abs(StatUtils.min(v.contrastRaw)));
-			if(StatUtils.max(v.contrastRaw) > max) {
-				max=StatUtils.max(v.contrastRaw);
+			if(StatUtils.max(v.tac) > max) {
+				max=StatUtils.max(v.tac);
 				vMax=v;
 			}
 			//System.out.println(nonAllVoxels.size());
 			}
 	   
 		}
-		new vecToStack(myHypStk, nonAllVoxels,"Nada");
+		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
 		
 
 
@@ -80,19 +80,9 @@ public class Esquema_ implements PlugInFilter {
 			}
 	////////////////////////////////////////////////////////////////
 		
-		/* Contrast and important params */
-		/*for (int i = 0; i < nonAllVoxels.size(); ) {
-			 if(nonAllVoxels.get(i).x>=50 && nonAllVoxels.get(i).y >= 95 && nonAllVoxels.get(i).slice>=20){
-		    	 System.out.println();
-		     }
-			 boolean a= nonAllVoxels.get(i).isNoisy(0.15);
-			if (Double.compare(((VoxelT2) nonAllVoxels.get(i)).getFWHM(), Double.NaN) == 0 || Double.compare(nonAllVoxels.get(i).getFWHM(), 0) == 0 || a )
-					nonAllVoxels.remove(i);	
-				else 
-					i++;	
-		}*/
 		
-		new vecToStack(myHypStk, nonAllVoxels,"Nada");
+		
+		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
 		
 	
 	
@@ -103,13 +93,15 @@ public class Esquema_ implements PlugInFilter {
 		double[] AIF = aifO.getAIF();
 		
 		//double[] AIF ={0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6926841336298653, 2.2324440658260905, 3.1371797309479312, 2.5298599426892068, 1.5935887778258893, 0.851058125557948, 0.4154007373529816, 0.17129676435706645, 0.06168409440693416, 0.02511351289655198, 0.009495270050608977, 0.003734759908372432, 0.0012936262647201466, 4.387568096030495E-4, 1.4637707370246457E-4, 4.821302407785589E-5, 1.5726165552045442E-5, 5.092678585377635E-6, 1.640770174170811E-6, 6.122058881290931E-7, 2.1613656285111652E-7, 6.521714180026211E-8, 1.9514803704573546E-8, 5.818380752154218E-9, 1.7150116169985371E-9, 5.02439303679748E-10, 1.463778824027736E-10, 4.242654570784719E-11, 1.223886376045624E-11, 3.51508715256437E-12};
-
+        double maxCBV =0;
 		double aifInt = StatUtils.sum(AIF);
-		for (int i = 0; i < nonAllVoxels.size(); i++) 
-			 nonAllVoxels.get(i).setCBV(aifInt);
+		for (VoxelT2 v:nonAllVoxels) {
+			 v.setCBV(aifInt);
+			 if (maxCBV < v.getCBV()) maxCBV = v.getCBV();
+		}
 		
 		
-		new vecToStack(myHypStk, nonAllVoxels,"CBV");
+		new vecToStack(myHypStk, nonAllVoxels,maxCBV,"CBV");
 		
 	
 		
@@ -120,6 +112,7 @@ public class Esquema_ implements PlugInFilter {
 		double[][] matrixAIF = MathUtils.lowTriangular(AIF);
 		double[][] matrixPAIF = MathUtils.pInvMon(matrixAIF);
 		double minMTT = 100,maxMTT = 0;
+		VoxelT2 sliM=null, slim=null; ;
 		
 		for (VoxelT2 v : nonAllVoxels){
 				if ( v.getContrastFitted() != null) {
@@ -134,14 +127,14 @@ public class Esquema_ implements PlugInFilter {
 			     v.setMMT(); 
 			     if (v.getMTT() < 0)
 			    	 System.out.println();
-			     if(v.getMTT() > maxMTT) maxMTT = v.getMTT();
-			     if(v.getMTT() < minMTT) minMTT = v.getMTT();
+			     if(v.getMTT() > maxMTT) { maxMTT = v.getMTT();sliM = v;}
+			     if(v.getMTT() < minMTT) {minMTT = v.getMTT(); slim = v;}
 			   
 			}		
 		}
 		
 			
-		new vecToStack(myHypStk, nonAllVoxels,"MTT");
+		new vecToStack(myHypStk, nonAllVoxels,maxMTT,"MTT");
 		System.out.println();
 		hyStack.setActivated();
 			
