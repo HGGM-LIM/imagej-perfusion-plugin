@@ -338,7 +338,7 @@ public class MathUtils {
 		boolean located = false;
 		try {
 			while (located == false) {
-				while (vals[ti] > vals[ti - 1]
+				while (vals[ti] >= vals[ti - 1] && vals[ti] > 0
 						&& (vals[ti] - vals[ti - 1] <= FastMath
 						.abs(vals[ti - 1]) * 4))
 					ti--;
@@ -393,7 +393,7 @@ public class MathUtils {
 		boolean located = false;
 		try {
 			while (located == false) {
-				while (vals[ti] > vals[ti + 1]
+				while (vals[ti] >= vals[ti + 1]
 						&& (vals[ti] - vals[ti + 1] <= vals[ti + 1] * 4)
 						&& vals[ti + 1] > 0)
 					ti++;

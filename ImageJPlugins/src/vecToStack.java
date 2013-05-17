@@ -33,7 +33,7 @@ public class vecToStack extends ImagePlus {
 			 else if(param == "Nada")
 				 parameter = v.tac[0];
 
-			target.setVoxel(v.x, v.y, v.slice - 1,  parameter*255/max);
+			target.setVoxel(v.x, v.y, v.slice - 1,  parameter*512/max);
 		}
 		//IJ.setMinAndMax(114, 741);
 		IJ.run(res, "Enhance Contrast", "saturated=0.35");

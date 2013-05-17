@@ -11,11 +11,13 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 
 public class MainFrame extends JFrame {
 	JComboBox comboFitting;
 	boolean startPressed;
+	JCheckBox sFit;
 
 	/**
 	 * Launch the application.
@@ -69,6 +71,10 @@ public class MainFrame extends JFrame {
 		});
 		startButton.setBounds(137, 77, 89, 23);
 		mainPanel.add(startButton);
+		
+		 sFit = new JCheckBox("S-Fitting");
+		sFit.setBounds(6, 151, 97, 23);
+		mainPanel.add(sFit);
 		
 		JPanel tabAIF = new JPanel();
 		tabbedPane.addTab("AIF ", null, tabAIF, null);

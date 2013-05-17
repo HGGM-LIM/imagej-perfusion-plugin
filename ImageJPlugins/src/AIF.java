@@ -13,14 +13,14 @@ public class AIF {
 	private double[] AIF;
 	
 
-	public AIF(List<VoxelT2> AllVoxels) {
+	public AIF(List<VoxelT2> AllVoxels,double max) {
 		
 		
 		//TODO añadir funcion MMC
 			AIFValid = new ArrayList<VoxelT2>();
 		for (VoxelT2 v : AllVoxels) {
 			// TODO 0.75 por dependiente del max
-			if(Double.compare(v.getFWHM(), Double.NaN) != 0 && Double.compare(v.getFWHM(), 0) > 0 && !v.isNoisy(0.125) && v.getMC() > 0.75 ) {
+			if(Double.compare(v.getFWHM(), Double.NaN) != 0 && Double.compare(v.getFWHM(), 0) > 0 && !v.isNoisy(0.125) && v.getMC() > max/8 ) {
 				AIFValid.add(v);
 				//v.AIFValid = true;
 			}
@@ -28,6 +28,9 @@ public class AIF {
 		}
 		probAIFs = MathAIF.getAIFs(AIFValid);
 		AIF = MathAIF.getAIF(probAIFs, true);
+		/*autoGamma AI = new autoGamma(AIF,MathUtils.minL(AIF),MathUtils.minR(AIF));
+		AI.fitting();
+		AIF =AI.getFit();*/
 		
 	}
 	

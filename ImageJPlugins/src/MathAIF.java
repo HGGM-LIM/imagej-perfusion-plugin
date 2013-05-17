@@ -82,9 +82,7 @@ public class MathAIF {
 			}
 
 		return posAIFs;
-		/*Vector<Voxel> bacala = new Vector<Voxel>();
-		bacala.add(posAIFs.get(17));
-		return bacala;*/
+		
 
 	}
 	
@@ -139,7 +137,7 @@ public class MathAIF {
 		}
 		
 		for(int i = 0; i < probAIF.length; i++)
-			if(probAIF[i] == true && MCs[i] < 0.75 * maxMC)
+			if(probAIF[i] == true && MCs[i] < 0.5 * maxMC)
 				probAIF[i] = false;
 				
 		

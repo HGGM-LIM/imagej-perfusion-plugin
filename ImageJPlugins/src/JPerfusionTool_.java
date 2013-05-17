@@ -47,13 +47,19 @@ public class JPerfusionTool_ implements PlugInFilter {
 			VoxelT2 v = (VoxelT2) voxIterator2.next(thresholds);
 			//VoxelT2 v = (VoxelT2) voxIterator2.next(1.5);
 			// TODO COGER SOLO LOS NO ENMASCARDADOS
+			//TODO Ojo te=-1
+			if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
+				System.out.println();
+			if(mf.sFit.isSelected() == true && v != null&& v.te == -1 && v.notFalling(8)) 
+				 v.te = 39;
 			if ( v != null && v.t0 > 0 && v.te > 0   ){
 				nonAllVoxels.add(v);
 			
-			//v.contrastRaw = MathUtils.vecSum(v.contrastRaw, FastMath.abs(StatUtils.min(v.contrastRaw)));
-			if(StatUtils.max(v.tac) > max) {
-				max=StatUtils.max(v.tac);
-				vMax=v;
+			
+				
+			if(StatUtils.max(v.contrastRaw) > max) {
+				max=StatUtils.max(v.contrastRaw);
+				
 			}
 			//System.out.println(nonAllVoxels.size());
 			}
@@ -86,7 +92,7 @@ public class JPerfusionTool_ implements PlugInFilter {
 		
 	
 	
-		AIF aifO = new AIF(nonAllVoxels);
+		AIF aifO = new AIF(nonAllVoxels,max);
 
 		aifO.paint(hyStack, aifO.getProbAIFs());
 		//double[] AIFC = aifO.getAIF();
@@ -115,8 +121,8 @@ public class JPerfusionTool_ implements PlugInFilter {
 		VoxelT2 sliM=null, slim=null; ;
 		
 		for (VoxelT2 v : nonAllVoxels){
-				if ( v.getContrastFitted() != null) {
-					  if(v.x>55 && v.y >= 95 && v.slice>=20 && v.getMC() > 2  ){
+				if ( v.getContrastFitted() != null ) {
+					  if(v.x>=52 && v.y >= 61 && v.slice>=23 ){
 					    	 System.out.println();
 					     }
 				if(v.AIFValid == true)
@@ -124,6 +130,8 @@ public class JPerfusionTool_ implements PlugInFilter {
 				
 					
 				 v.setContrastEstim(matrixPAIF);
+				 //TODO AL pponer a 39 todos;para hacerlo bien abria que ajustar solo los que suben y no bajan a buen nivel
+				 if(StatUtils.max(v.contrastFitted) < 1.2* StatUtils.max(v.contrastRaw) )
 			     v.setMMT(); 
 			     if (v.getMTT() < 0)
 			    	 System.out.println();
@@ -149,7 +157,7 @@ public class JPerfusionTool_ implements PlugInFilter {
 	
 	private fitter getFitter(Object object) {
 		if (object == "Auto")
-			return new GammaFitter();
+			return new autoGamma();
 		else if(object == "NoFitter")
 			return new NoFitter();
 		else if(object == "GammaFitter")

@@ -242,6 +242,9 @@ public class VoxelT2 extends Voxel{
 		return MC > max*0.125;
 	}
 	
+	public boolean notFalling(int sep) {
+		return MathUtils.whereIs(contrastRaw,StatUtils.max(contrastRaw)) > contrastRaw.length - sep -1;
+	}
 	
 
 
