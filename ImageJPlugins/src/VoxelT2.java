@@ -1,3 +1,5 @@
+import java.util.List;
+
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
@@ -244,6 +246,19 @@ public class VoxelT2 extends Voxel{
 	
 	public boolean notFalling(int sep) {
 		return MathUtils.whereIs(contrastRaw,StatUtils.max(contrastRaw)) > contrastRaw.length - sep -1;
+	}
+	
+	public static VoxelT2 VoxelSearch(List<VoxelT2> voxels,int x,int y,int slice) {
+		
+		for( VoxelT2 v : voxels) {
+		if(v.slice == slice)
+			if(v.x == x)
+				if(v.y == y)
+						return v;
+				
+		}
+		return null;
+			
 	}
 	
 

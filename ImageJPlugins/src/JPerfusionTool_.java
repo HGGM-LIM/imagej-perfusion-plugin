@@ -1,4 +1,8 @@
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +11,26 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import ij.IJ;
+import ij.IJEventListener;
 import ij.ImagePlus;
+import ij.gui.ImageCanvas;
+import ij.gui.Plot;
+import ij.gui.PlotWindow;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
-public class JPerfusionTool_ implements PlugInFilter {
+public class JPerfusionTool_ implements PlugInFilter, MouseListener, WindowListener {
 	String path = IJ
 			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 	ImagePlus hyStack;
+	ImageCanvas canvas;
+	List<VoxelT2> nonAllVoxels;
 	private JPanel main_panel;
+	PlotWindow pw = null;
 
 	@Override
 	public void run(ImageProcessor arg0) {
+		
 		MainFrame mf = new MainFrame();
 		
 		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
@@ -41,7 +53,7 @@ public class JPerfusionTool_ implements PlugInFilter {
 	   
 	    
 		voxIterator voxIterator2 = (voxIterator) myHypStk.iterator();
-		List<VoxelT2> nonAllVoxels = new ArrayList<VoxelT2>();
+		 nonAllVoxels = new ArrayList<VoxelT2>();
 		
 		while (voxIterator2.hasNext()) {
 			VoxelT2 v = (VoxelT2) voxIterator2.next(thresholds);
@@ -50,8 +62,8 @@ public class JPerfusionTool_ implements PlugInFilter {
 			//TODO Ojo te=-1
 			if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
 				System.out.println();
-			if(mf.sFit.isSelected() == true && v != null&& v.te == -1 && v.notFalling(8)) 
-				 v.te = 39;
+			if(mf.sFit.isSelected() == true && v != null&& v.te == -1 && v.notFalling(5)) 
+				 v.te = v.contrastRaw.length - 1 ;
 			if ( v != null && v.t0 > 0 && v.te > 0   ){
 				nonAllVoxels.add(v);
 			
@@ -65,6 +77,8 @@ public class JPerfusionTool_ implements PlugInFilter {
 			}
 	   
 		}
+		
+		
 		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
 		
 
@@ -89,7 +103,11 @@ public class JPerfusionTool_ implements PlugInFilter {
 		
 		
 		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
+		/////////////////////////////////////////////////
+		canvas = hyStack.getCanvas();
+		canvas.addMouseListener(this);
 		
+		////////////////////////////////////////
 	
 	
 		AIF aifO = new AIF(nonAllVoxels,max);
@@ -165,6 +183,100 @@ public class JPerfusionTool_ implements PlugInFilter {
 		else if(object == "autoGamma")
 			return new autoGamma();
 		return null;
+	}
+	
+	public void mousePressed(MouseEvent e) {
+		
+		//int x = e.getX();
+		//int y = e.getY();
+		int offscreenX = canvas.offScreenX(e.getX());
+		int offscreenY = canvas.offScreenY(e.getY());
+		VoxelT2 v = VoxelT2.VoxelSearch(nonAllVoxels, offscreenX, offscreenY, hyStack.getSlice());
+		
+		if(v != null){
+			double[] x = new double[v.contrastRaw.length], y = new double[x.length];
+			for (int i=0; i < x.length; i++)
+				x[i] = i;
+			
+			y = v.contrastRaw;
+			
+		Plot chart = new Plot("slice:"+hyStack.getSlice()+"  x:"+offscreenX+"  y:"+offscreenY ,"Time","Contrast",x,y);
+		if (pw==null){
+			pw = chart.show();
+			pw.addWindowListener(this);
+		  
+		}else
+			pw.drawPlot(chart);
+		} else 
+			IJ.showMessage("No meaningful contrast");
+		
+			
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		//pw = null;
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		pw = null;
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
