@@ -18,6 +18,7 @@ public class MainFrame extends JFrame {
 	JComboBox comboFitting;
 	boolean startPressed;
 	JCheckBox sFit;
+	JCheckBox showCont;
 
 	/**
 	 * Launch the application.
@@ -73,8 +74,14 @@ public class MainFrame extends JFrame {
 		mainPanel.add(startButton);
 		
 		 sFit = new JCheckBox("S-Fitting");
+		 sFit.setSelected(true);
+		 sFit.setEnabled(false);
 		sFit.setBounds(6, 151, 97, 23);
 		mainPanel.add(sFit);
+		
+		 showCont = new JCheckBox("Show Contrast w/ mouseMove.");
+		showCont.setBounds(6, 125, 198, 23);
+		mainPanel.add(showCont);
 		
 		JPanel tabAIF = new JPanel();
 		tabbedPane.addTab("AIF ", null, tabAIF, null);

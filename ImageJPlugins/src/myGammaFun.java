@@ -47,5 +47,7 @@ public class myGammaFun implements ParametricUnivariateFunction {
 	
 		
 	}
+	
+	
 
 }

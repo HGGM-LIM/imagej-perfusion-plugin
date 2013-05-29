@@ -19,14 +19,13 @@ import ij.gui.PlotWindow;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
-public class JPerfusionTool_ implements PlugInFilter, MouseListener, WindowListener {
+public class JPerfusionTool_ implements PlugInFilter {
 	String path = IJ
 			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 	ImagePlus hyStack;
-	ImageCanvas canvas;
 	List<VoxelT2> nonAllVoxels;
 	private JPanel main_panel;
-	PlotWindow pw = null;
+	
 
 	@Override
 	public void run(ImageProcessor arg0) {
@@ -104,8 +103,10 @@ public class JPerfusionTool_ implements PlugInFilter, MouseListener, WindowListe
 		
 		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
 		/////////////////////////////////////////////////
-		canvas = hyStack.getCanvas();
-		canvas.addMouseListener(this);
+		//canvas = hyStack.getCanvas();
+		//canvas.addMouseListener(new EventUtils(hyStack,nonAllVoxels));
+		new EventUtils(hyStack,nonAllVoxels,mf.showCont).turnOn();
+	
 		
 		////////////////////////////////////////
 	
@@ -185,98 +186,5 @@ public class JPerfusionTool_ implements PlugInFilter, MouseListener, WindowListe
 		return null;
 	}
 	
-	public void mousePressed(MouseEvent e) {
-		
-		//int x = e.getX();
-		//int y = e.getY();
-		int offscreenX = canvas.offScreenX(e.getX());
-		int offscreenY = canvas.offScreenY(e.getY());
-		VoxelT2 v = VoxelT2.VoxelSearch(nonAllVoxels, offscreenX, offscreenY, hyStack.getSlice());
-		
-		if(v != null){
-			double[] x = new double[v.contrastRaw.length], y = new double[x.length];
-			for (int i=0; i < x.length; i++)
-				x[i] = i;
-			
-			y = v.contrastRaw;
-			
-		Plot chart = new Plot("slice:"+hyStack.getSlice()+"  x:"+offscreenX+"  y:"+offscreenY ,"Time","Contrast",x,y);
-		if (pw==null){
-			pw = chart.show();
-			pw.addWindowListener(this);
-		  
-		}else
-			pw.drawPlot(chart);
-		} else 
-			IJ.showMessage("No meaningful contrast");
-		
-			
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		//pw = null;
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		pw = null;
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
