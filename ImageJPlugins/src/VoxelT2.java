@@ -251,14 +251,22 @@ public class VoxelT2 extends Voxel{
 	public static VoxelT2 VoxelSearch(List<VoxelT2> voxels,int x,int y,int slice) {
 		
 		for( VoxelT2 v : voxels) {
-		if(v.slice == slice)
-			if(v.x == x)
-				if(v.y == y)
+		if(v.slice == slice && v.x == x && v.y == y)
 						return v;
 				
 		}
 		return null;
 			
+	}
+	
+	public VoxelT2 VoxelSearch(List<VoxelT2> voxels) {
+		
+		for( VoxelT2 v2 : voxels) {
+			if(v2.compareTo(this) == 1) return v2;
+			
+		}
+		return null;
+		
 	}
 	
 

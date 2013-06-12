@@ -1,6 +1,6 @@
 
 
-public class Voxel {
+public class Voxel implements Comparable{
 
 	/* X coordinate */
 	public final int x;
@@ -35,6 +35,15 @@ public class Voxel {
 	public void setContrastFitted(fitter f){}
 
 	public void setParams() {}
+
+
+	@Override
+	public int compareTo(Object o) {
+		Voxel v = (Voxel) o;
+		if(slice == v.slice && x == v.x && y == v.y  )
+			return 1;
+		return 0;
+	}
 	
 	
 	

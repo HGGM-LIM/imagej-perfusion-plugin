@@ -21,6 +21,12 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 	List<VoxelT2> voxels;
 	JCheckBox showMove;
 	
+	/**
+	 * Constructor, associates the event to a particular image and voxels
+	 * @param ip Image to be asocciated
+	 * @param voxels in the image
+	 * @param showMove indicates if the voxel values are shown with the mouse movement
+	 */
 	public EventUtils (ImagePlus ip,List<VoxelT2> voxels,JCheckBox showMove) {
 		this.ip = ip;
 		canvas = ip.getCanvas();
@@ -30,18 +36,24 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 		
 	}
 	
+	/**
+	 *  Enable the events*/
 	public void turnOn() {
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 	
 	}
 	
+	/**
+	 *  Unable the Events */
 	public void turnOff() {
 		canvas.addMouseListener(null);
 		canvas.addMouseMotionListener(null);
 	}
 
-	@Override
+	/**
+	 * Performs the showing for a particular voxel,when this one is marked by the mouse
+	 */
 	public void mouseClicked(MouseEvent e) {
 		int offscreenX = canvas.offScreenX(e.getX());
 		int offscreenY = canvas.offScreenY(e.getY());
@@ -145,7 +157,10 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 		
 	}
 
-	@Override
+	/**
+	 * When the option is selected,perform the mouseClicked action 
+	 * just with the mouse movement
+	 */
 	public void mouseMoved(MouseEvent e) {
 		if(showMove.isSelected() == true)
 		mouseClicked(e);

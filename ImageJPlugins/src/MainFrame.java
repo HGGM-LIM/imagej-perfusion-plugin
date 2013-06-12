@@ -19,6 +19,7 @@ public class MainFrame extends JFrame {
 	boolean startPressed;
 	JCheckBox sFit;
 	JCheckBox showCont;
+	JCheckBox AIFVoxels;
 
 	/**
 	 * Launch the application.
@@ -85,6 +86,11 @@ public class MainFrame extends JFrame {
 		
 		JPanel tabAIF = new JPanel();
 		tabbedPane.addTab("AIF ", null, tabAIF, null);
+		tabAIF.setLayout(null);
+		
+		AIFVoxels = new JCheckBox("Show AIF voxels");
+		AIFVoxels.setBounds(6, 151, 117, 23);
+		tabAIF.add(AIFVoxels);
 	}
 	
 	public Object getCombo() {

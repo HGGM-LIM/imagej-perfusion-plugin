@@ -129,15 +129,45 @@ public class MathAIF {
 				anyCoincidence = true;
 				
 				if(MCs[i] > maxMC)
-					maxMC = MCs[i];
-				
+					maxMC = MCs[i];	
 			}
 
 			j++;
 		}
 		
+		int j2 = 0;
+		if (anyCoincidence == false) {
+		for (int i : biggerThanHMaxMC) {
+			if ( FWHMs[i] <=  (thrFWHM ) &&  MMCs[i] >=  thrMMC-1 &&  MMCs[i] <=  thrMMC+1) {
+				
+				probAIF[j2] = true;
+				anyCoincidence = true;
+				
+				if(MCs[i] > maxMC)
+					maxMC = MCs[i];	
+			}
+
+			j2++;
+		}
+		}
+		int j3=0;
+		if (anyCoincidence == false) {
+			for (int i : biggerThanHMaxMC) {
+				if ( FWHMs[i] <=  (meanFWHM/2 ) &&  MMCs[i] < meanMMC/2.5) {
+					
+					probAIF[j3] = true;
+					anyCoincidence = true;
+				
+			}
+				j3++;
+		}
+		}
+		
+		
+		
+		
 		for(int i = 0; i < probAIF.length; i++)
-			if(probAIF[i] == true && MCs[i] < 0.5 * maxMC)
+			if(probAIF[i] == true && MCs[i] < 0.75 * maxMC)
 				probAIF[i] = false;
 				
 		
