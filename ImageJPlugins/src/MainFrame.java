@@ -20,6 +20,7 @@ public class MainFrame extends JFrame {
 	JCheckBox sFit;
 	JCheckBox showCont;
 	JCheckBox AIFVoxels;
+	JButton startButton;
 
 	/**
 	 * Launch the application.
@@ -41,7 +42,7 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 400, 247);
 		
 		
@@ -65,10 +66,11 @@ public class MainFrame extends JFrame {
 		lblSelectFitting.setBounds(21, 14, 111, 14);
 		mainPanel.add(lblSelectFitting);
 		
-		JButton startButton = new JButton("Start");
+		startButton = new JButton("Start");
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startPressed = true;
+				
 			}
 		});
 		startButton.setBounds(137, 77, 89, 23);

@@ -4,6 +4,7 @@ import ij.gui.ImageCanvas;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -13,11 +14,14 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 
+import org.apache.commons.math3.stat.StatUtils;
+
 
 public class EventUtils implements MouseListener ,MouseMotionListener,WindowListener{
 	ImageCanvas canvas;
 	ImagePlus ip;
 	PlotWindow pw;
+	Plot chart;
 	List<VoxelT2> voxels;
 	JCheckBox showMove;
 	
@@ -27,10 +31,11 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 	 * @param voxels in the image
 	 * @param showMove indicates if the voxel values are shown with the mouse movement
 	 */
-	public EventUtils (ImagePlus ip,List<VoxelT2> voxels,JCheckBox showMove) {
+	public EventUtils (ImagePlus ip,List<VoxelT2> voxels,JCheckBox showMove,Plot c) {
 		this.ip = ip;
 		canvas = ip.getCanvas();
 		this.voxels = voxels;
+		chart = c;
 		pw = null;
 		this.showMove = showMove;
 		
@@ -55,6 +60,8 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 	 * Performs the showing for a particular voxel,when this one is marked by the mouse
 	 */
 	public void mouseClicked(MouseEvent e) {
+		ip = IJ.getImage();
+		canvas = ip.getCanvas();
 		int offscreenX = canvas.offScreenX(e.getX());
 		int offscreenY = canvas.offScreenY(e.getY());
 		VoxelT2 v = VoxelT2.VoxelSearch(voxels, offscreenX, offscreenY, ip.getSlice());
@@ -72,12 +79,14 @@ public class EventUtils implements MouseListener ,MouseMotionListener,WindowList
 			pw.addWindowListener(this);
 		  
 		}else
+			//chart.setLimits(StatUtils.min(x), StatUtils.max(y), StatUtils.min(v.contrastEstim),StatUtils.max(v.contrastEstim) );
 			pw.setTitle("slice:"+ip.getSlice()+"  x:"+offscreenX+"  y:"+offscreenY);
 			chart.setColor(java.awt.Color.BLUE);
 			chart.addPoints(x, v.contrastFitted, PlotWindow.LINE);
 			chart.addLabel(0.75, 0.2, "— Fitted Contrast");
 			chart.setColor(java.awt.Color.BLACK);
 			chart.addLabel(0.75, 0.1, "— Raw Contrast");
+			
 			pw.drawPlot(chart);
 		} else 
 			if(showMove.isSelected() == false)

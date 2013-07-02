@@ -2,6 +2,7 @@ import java.util.List;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.measure.Calibration;
 
 public class vecToStack extends ImagePlus {
 
@@ -10,8 +11,8 @@ public class vecToStack extends ImagePlus {
 		int[] dim = ip.getDimensions();
 		//ImagePlus res = IJ.createImage(ip.getTitle(),"16-bit", dim[0], dim[1],
 			//	dim[3]);
-		ImagePlus res = IJ.createImage(ip.getTitle(), dim[0], dim[1],
-				dim[3],ip.getBitDepth());
+		ImagePlus res = IJ.createImage(ip.getTitle(),"32-bit", dim[0], dim[1],
+				dim[3]);
 		res.setDimensions(1, dim[3], 1);
 		res.setDisplayRange(0, max);
 		
@@ -20,6 +21,8 @@ public class vecToStack extends ImagePlus {
 			res.setTitle("CBV");
 		else if (param == "MTT")
 			res.setTitle("MTT");
+		else if (param == "CBF")
+			res.setTitle("CBF");
 		else if (param == "Nada")
 			res.setTitle("Normal");
 
@@ -30,12 +33,21 @@ public class vecToStack extends ImagePlus {
 				parameter = v.getCBV();
 			 else if(param == "MTT")
 				parameter = v.getMTT();
+			 else if(param == "CBF")
+				 parameter = v.getCBF();
 			 else if(param == "Nada")
 				 parameter = v.tac[0];
 
 			target.setVoxel(v.x, v.y, v.slice - 1,  parameter*512/max);
 		}
-		//IJ.setMinAndMax(114, 741);
+		 Calibration cal = ip.getCalibration();
+	        double size_x = cal.pixelWidth;
+	        double size_y = cal.pixelHeight;
+	        double size_z = cal.pixelDepth;
+	        String units = cal.getUnit();
+	        String vscomm = "setVoxelSize(" + size_x + ", " + size_y + ", "
+	                                      + size_z + ", \"" + units + "\")";
+	        IJ.runMacro(vscomm);
 		IJ.run(res, "Enhance Contrast", "saturated=0.35");
 		res.show();
 		IJ.run("In [+]");

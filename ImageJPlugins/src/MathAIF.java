@@ -69,8 +69,7 @@ public class MathAIF {
 		}
 		System.out.println(StatUtils.max(MCs)+" "+MathUtils.whereIs(MCs, StatUtils.max(MCs)));
 		
-		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
-				StatUtils.max(MCs) * 0.0);
+		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,StatUtils.max(MCs) * 0.0);
 
 		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs,MCs);
 		 List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
@@ -153,7 +152,7 @@ public class MathAIF {
 		int j3=0;
 		if (anyCoincidence == false) {
 			for (int i : biggerThanHMaxMC) {
-				if ( FWHMs[i] <=  (meanFWHM/2 ) &&  MMCs[i] < meanMMC/2.5) {
+				if ( FWHMs[i] <=  (meanFWHM/2 ) &&  MMCs[i] < meanMMC/2) {
 					
 					probAIF[j3] = true;
 					anyCoincidence = true;
@@ -167,7 +166,7 @@ public class MathAIF {
 		
 		
 		for(int i = 0; i < probAIF.length; i++)
-			if(probAIF[i] == true && MCs[i] < 0.75 * maxMC)
+			if(probAIF[i] == true && MCs[i] < 0.5 * maxMC)
 				probAIF[i] = false;
 				
 		
@@ -185,7 +184,7 @@ public class MathAIF {
 		for (int i = 0; i < result.length; i++) {
 			double[] insContrastRaw = new double[posAIFs.size()];
 			for (int j = 0; j < posAIFs.size(); j++)
-				insContrastRaw[j] = (posAIFs.get(j)).contrastFitted[i];
+				insContrastRaw[j] = (posAIFs.get(j)).contrastRaw[i];
 
 			result[i] = MathUtils.mEsti(insContrastRaw);
 			//if (result[i] < 0) result[i] = 0;

@@ -38,11 +38,13 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 		this.setImage(ip);
 		this.dim = ip.getDimensions();
 		
+		
 
 		// Set the current calibration
 		Calibration cal = ip.getCalibration();
 		this.setCalibration(cal);
 		this.cal = cal;
+		//this.setType(ImagePlus.GRAY32);
 
 	}
 

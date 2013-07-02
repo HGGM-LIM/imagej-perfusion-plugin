@@ -1,169 +1,194 @@
-
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import javax.swing.JPanel;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import ij.IJ;
-import ij.IJEventListener;
 import ij.ImagePlus;
-import ij.gui.ImageCanvas;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.plugin.filter.PlugInFilter;
+import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 
-public class JPerfusionTool_ implements PlugInFilter {
+public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	//String path = IJ
 		//	.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
+
 	ImagePlus hyStack;
 	List<VoxelT2> nonAllVoxels;
-	private JPanel main_panel;
-	
+	// private JPanel main_panel;
+	MainFrame mf;
 
 	@Override
 	public void run(ImageProcessor arg0) {
-		
-		MainFrame mf = new MainFrame();
-		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
-	  // double mean= hyStack.getStatistics().mean;
+		IJ.showStatus("Start");
+		// hyStack.setType(ImagePlus.GRAY32);
+		mf = new MainFrame();
+		// double mean= hyStack.getStatistics().mean;
 		mf.setVisible(true);
-		while(mf.startPressed==false);
-	
+		mf.startButton.addActionListener(this);
+	}
 
-	  /*******Masking*****************/
+	public void doIt() {
+
+		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
+
+		/******* Masking *****************/
+		// IJ.showMessage("Aqui");
 		int[] thresholds = new int[myHypStk.getNSlices()];
-		double max=0,maxAux=0;
-		VoxelT2 vMax=null;
-		int a=hyStack.getNSlices()/2;
-		
-		int thr = (int) (myHypStk.getThreshold( a == 0 ? 1:a ) / 1.1);
-		for (int i = 1; i <= myHypStk.getNSlices();i++){
-			//thresholds[i-1]=(int) (myHypStk.getThreshold(i));
-			thresholds[i-1] = thr;
+		double max = 0, maxAux = 0;
+		VoxelT2 vMax = null;
+		int a = hyStack.getNSlices() / 2;
+
+		int thr = (int) (myHypStk.getThreshold(a == 0 ? 1 : a)  /*/ 1.1*/ );
+		for (int i = 1; i <= myHypStk.getNSlices(); i++) {
+			// thresholds[i-1]=(int) (myHypStk.getThreshold(i));
+			thresholds[i - 1] = thr;
 		}
-		
-		
-	   
-	    
+
+		IJ.showStatus("Addig Voxels...");
 		voxIterator voxIterator2 = (voxIterator) myHypStk.iterator();
-		 nonAllVoxels = new ArrayList<VoxelT2>();
-		
+		nonAllVoxels = new ArrayList<VoxelT2>();
+
 		while (voxIterator2.hasNext()) {
 			VoxelT2 v = (VoxelT2) voxIterator2.next(thresholds);
-			//VoxelT2 v = (VoxelT2) voxIterator2.next(1.5);
+			// VoxelT2 v = (VoxelT2) voxIterator2.next(1.5);
 			// TODO COGER SOLO LOS NO ENMASCARDADOS
-			//TODO Ojo te=-1
-			//if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
-				//System.out.println();
-			if(mf.sFit.isSelected() == true && v != null&& v.te == -1 && v.notFalling(5)) 
-				 v.te = v.contrastRaw.length - 1 ;
-			if ( v != null && v.t0 > 0 && v.te > 0   ){
+			// TODO Ojo te=-1
+			// if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
+			// System.out.println();
+			if (mf.sFit.isSelected() == true && v != null && v.te == -1
+					&& v.notFalling(10))
+				v.te = v.contrastRaw.length - 1;
+			if (v != null && v.t0 > 0 && v.te > 0) {
 				nonAllVoxels.add(v);
-			
-			
-				
-			if(StatUtils.max(v.contrastRaw) > max) {
-				max=StatUtils.max(v.contrastRaw);
-				
-			}
-			//System.out.println(nonAllVoxels.size());
-			}
-	   
-		}
-		
-		
-		new vecToStack(myHypStk, nonAllVoxels,30000,"Nada");
-		
 
+				if (StatUtils.max(v.contrastRaw) > max) {
+					max = StatUtils.max(v.contrastRaw);
 
-        /******************* FITTING**************************/
-		// TODO Cast different fittings.
-		
-		fitter f = getFitter(mf.comboFitting.getSelectedItem());
-	
-		VoxelT2 voxelaco= nonAllVoxels.get(0);
-		for (VoxelT2 v : nonAllVoxels) {
-			//if(!v.isNoisy(0.15))
-				v.setContrastFitted(f);
-			//else
-				//v.contrastFitted = null;
-				if(v.getContrastFitted() != null ){
-				v.setParams();
 				}
+				// System.out.println(nonAllVoxels.size());
 			}
-	////////////////////////////////////////////////////////////////
-		
-		
-		
-		new vecToStack(myHypStk, nonAllVoxels,max,"Nada");
-		new EventUtils(hyStack,nonAllVoxels,mf.showCont).turnOn();
-	
-		
-		////////////////////////////////////////
-	
-	
-		AIF aifO = new AIF(nonAllVoxels,max);
-		
-		mf.AIFVoxels.addItemListener(aifO);
-		
-		double[] AIF = aifO.getAIF();
-		
-		//double[] AIF ={0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6926841336298653, 2.2324440658260905, 3.1371797309479312, 2.5298599426892068, 1.5935887778258893, 0.851058125557948, 0.4154007373529816, 0.17129676435706645, 0.06168409440693416, 0.02511351289655198, 0.009495270050608977, 0.003734759908372432, 0.0012936262647201466, 4.387568096030495E-4, 1.4637707370246457E-4, 4.821302407785589E-5, 1.5726165552045442E-5, 5.092678585377635E-6, 1.640770174170811E-6, 6.122058881290931E-7, 2.1613656285111652E-7, 6.521714180026211E-8, 1.9514803704573546E-8, 5.818380752154218E-9, 1.7150116169985371E-9, 5.02439303679748E-10, 1.463778824027736E-10, 4.242654570784719E-11, 1.223886376045624E-11, 3.51508715256437E-12};
-        double maxCBV =0;
-		double aifInt = StatUtils.sum(AIF);
-		for (VoxelT2 v:nonAllVoxels) {
-			 v.setCBV(aifInt);
-			 if (maxCBV < v.getCBV()) maxCBV = v.getCBV();
+
 		}
+
+		new vecToStack(myHypStk, nonAllVoxels, 30000, "Nada");
+
+		/******************* FITTING **************************/
+		// TODO Cast different fittings.
+
+		fitter f = getFitter(mf.comboFitting.getSelectedItem());
+
+		for (VoxelT2 v : nonAllVoxels) {
+			// if(!v.isNoisy(0.15))
+			v.setContrastFitted(f);
+			// else
+			// v.contrastFitted = null;
+			if (v.getContrastFitted() != null) {
+				v.setParams();
+			}
+		}
+		// //////////////////////////////////////////////////////////////
+
+		Plot ch = new Plot("AIF", "Time", "Contrast");
+		new EventUtils(hyStack, nonAllVoxels, mf.showCont, ch).turnOn();
+
+		// //////////////////////////////////////
+
+		AIF aifO = new AIF(nonAllVoxels, max);
+
+		mf.AIFVoxels.addItemListener(aifO);
+
+		double[] AIF = aifO.getAIF();
+		aifO.setAIFfit(f);
+		// //////////////////////
+		AIF = aifO.getAIFfit();
+		JOptionPane jop = new JOptionPane("Are you happy enough with the AIF?",
+				JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
 		
-		
-		new vecToStack(myHypStk, nonAllVoxels,maxCBV,"CBV");
-		
-	
+		jop.setEnabled(true);
+		JDialog dialog = jop.createDialog("AIF Validation");
 		
 
-		/***********Contrast without AIF influence************/
+		dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+		// dialog.setVisible(true);
+
+		aifO.paint(hyStack);
+		int b = 1;
+		while (b == 1) {
+			aifO.paintChart();
+			dialog.setVisible(true);
+			b = (int) jop.getValue();
+			if (b == 1){
+				aifO.manualCalc(nonAllVoxels);
+			    aifO.setAIFfit(f);
+			   AIF = aifO.getAIFfit();
+			}
+
+		}
 		
-		/////pseudoinverse AIF///////////
+
+		// //////////////////////////////////////
+		VoxelT2 sM = null;
+		double maxCBV = 0;
+		double aifInt = MathUtils.interBad(AIF);
+		for (VoxelT2 v : nonAllVoxels) {
+			if (StatUtils.max(v.contrastFitted) < 2 * StatUtils
+					.max(v.contrastRaw))
+				v.setCBV(aifInt);
+			if (maxCBV < v.getCBV()) {
+				maxCBV = v.getCBV();
+				sM = v;
+			}
+
+		}
+
+		new vecToStack(myHypStk, nonAllVoxels, maxCBV, "CBV");
+		new EventUtils(IJ.getImage(), nonAllVoxels, mf.showCont, ch).turnOn();
+
+		/*********** Contrast without AIF influence ************/
+
+		// ///pseudoinverse AIF///////////
 		double[][] matrixAIF = MathUtils.lowTriangular(AIF);
 		double[][] matrixPAIF = MathUtils.pInvMon(matrixAIF);
-		double minMTT = 100,maxMTT = 0;
-		VoxelT2 sliM=null, slim=null; ;
-		
-		for (VoxelT2 v : nonAllVoxels){
-				if ( v.getContrastFitted() != null ) {
-					  if(v.x>=52 && v.y >= 61 && v.slice>=23 ){
-					    	 System.out.println();
-					     }
-				if(v.AIFValid == true)
-					 System.out.println();
-				
-					
-				 v.setContrastEstim(matrixPAIF);
-				 //TODO AL pponer a 39 todos;para hacerlo bien abria que ajustar solo los que suben y no bajan a buen nivel
-				 if(StatUtils.max(v.contrastFitted) < 1.2* StatUtils.max(v.contrastRaw) )
-			     v.setMMT(); 
-			     if (v.getMTT() < 0)
-			    	 System.out.println();
-			     if(v.getMTT() > maxMTT) { maxMTT = v.getMTT();sliM = v;}
-			     if(v.getMTT() < minMTT) {minMTT = v.getMTT(); slim = v;}
-			   
-			}		
-		}
-		
-			
-		new vecToStack(myHypStk, nonAllVoxels,maxMTT,"MTT");
-		System.out.println();
-		hyStack.setActivated();
-			
+		double minMTT = 100, maxMTT = 0;
+		VoxelT2 sliM = null, slim = null;
+		;
 
+		for (VoxelT2 v : nonAllVoxels) {
+			if (v.AIFValid == true)
+				System.out.println();
+			v.setContrastEstim(matrixPAIF);
+
+			double aMax = StatUtils.max(v.contrastEstim) > FastMath
+					.abs(StatUtils.min(v.contrastEstim)) ? 1 : -1;
+			if (aMax > 0/* aMax < 1.2* StatUtils.max(v.contrastRaw) */) {
+				v.setMTT();
+				v.setCBF();
+			}
+
+			if (v.getMTT() > maxMTT) {
+				maxMTT = v.getMTT();
+				sliM = v;
+			}
+			if (v.getMTT() < minMTT) {
+				minMTT = v.getMTT();
+				slim = v;
+			}
+
+		}
+
+		new vecToStack(myHypStk, nonAllVoxels, maxMTT, "MTT");
+		new vecToStack(myHypStk, nonAllVoxels, maxCBV, "CBF");
+		RoiManager.getInstance().setVisible(true);
 	}
 
 	@Override
@@ -171,18 +196,22 @@ public class JPerfusionTool_ implements PlugInFilter {
 		hyStack = arg1;
 		return DOES_ALL + STACK_REQUIRED;
 	}
-	
+
 	private fitter getFitter(Object object) {
 		if (object == "Auto")
 			return new autoGamma();
-		else if(object == "NoFitter")
+		else if (object == "NoFitter")
 			return new NoFitter();
-		else if(object == "GammaFitter")
+		else if (object == "GammaFitter")
 			return new GammaFitter();
-		else if(object == "autoGamma")
+		else if (object == "autoGamma")
 			return new autoGamma();
 		return null;
 	}
-	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		doIt();
+	}
 
 }

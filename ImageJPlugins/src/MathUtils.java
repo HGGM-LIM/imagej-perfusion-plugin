@@ -9,7 +9,7 @@ import org.apache.commons.math3.util.FastMath;
 public class MathUtils {
 
 	/**
-	 * Calculate the one-step M-estimator wehre the result comes by (1.28 * MADN
+	 * Calculate the one-step M-estimator where the result comes by (1.28 * MADN
 	 * * (MU -L) +MB) / (n - L - MU) MADN = MAD / 0.6745 ; MAD = Median (|values
 	 * - M|) ; M = Median (values) ; MU = outliers greater than the median L =
 	 * number of outliers smaller than the media MU = sum(nonOutliers)
@@ -310,8 +310,18 @@ public class MathUtils {
 	 * @return the aif's pseudo-inverse by SVD
 	 */
 	public static double[][] pInvMon(double[][] aif) {
-		return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
-				false)).getSolver().getInverse().getData();
+		RealMatrix trunUTrans,trunS,trunV;
+		SingularValueDecomposition svd = new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
+				false));
+		int rank = svd.getRank();
+		trunS = svd.getS().getSubMatrix(0, rank -1, 0, rank -1);
+		trunV = svd.getV().getSubMatrix(0,aif[0].length - 1, 0, rank -1);
+		trunUTrans = svd.getUT().getSubMatrix(0,  rank -1, 0, aif[0].length - 1);
+		
+		return trunV.multiply(trunS).multiply(trunUTrans).getData();
+		
+		/*return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
+				false)).getSolver().getInverse().getData();*/
 	}
 
 	/**
@@ -339,8 +349,8 @@ public class MathUtils {
 		try {
 			while (located == false) {
 				while (vals[ti] >= vals[ti - 1] && vals[ti] > 0
-						&& (vals[ti] - vals[ti - 1] <= FastMath
-						.abs(vals[ti - 1]) * 4))
+						/*&& (vals[ti] - vals[ti - 1] <= FastMath
+						.abs(vals[ti - 1]) * 4)*/)
 					ti--;
 				tMaxRel = maxLFrom(ti, vals);
 				if (((max - vals[ti]) >= 0.5 * max || (vals[ti] - vals[ti - 1] >= vals[ti - 1] * 4))

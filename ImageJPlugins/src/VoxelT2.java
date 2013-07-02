@@ -13,7 +13,7 @@ public class VoxelT2 extends Voxel{
 	protected double[] contrastFitted;
 	
 	/* Contrast without AIF effect*/
-	private double[] contrastEstim;
+	protected double[] contrastEstim;
 	
 	/* Curve parameters*/
 	/* Maximum Concentration*/
@@ -151,6 +151,14 @@ public class VoxelT2 extends Voxel{
 	public double getCBV() {
 		return CBV;
 	}
+	
+	/**
+	 * CBF getter
+	 * @return
+	 */
+	public double getCBF() {
+		return CBF;
+	}
 
 
 	/**
@@ -160,7 +168,7 @@ public class VoxelT2 extends Voxel{
 	 * @param aifInt  AIF function integrated
 	 */
 	public void setCBV(double aifInt) {
-		CBV = MathUtils.interBad(contrastRaw)/ aifInt;
+		CBV = MathUtils.interBad(contrastFitted)/ aifInt;
 	}
 	
 	/**
@@ -218,9 +226,18 @@ public class VoxelT2 extends Voxel{
 	/**
 	 * Establish the MTT
 	 */
-	public void setMMT() {
+	public void setMTT() {
+		/*if(AIFValid == true)
+			System.out.println();*/
 		double max=StatUtils.max(contrastEstim);
 		MTT = MathUtils.interBad(contrastEstim)/max;
+	}
+	
+	/**
+	 * Establish the CBF
+	 */
+	public void setCBF() {
+		CBF = CBV/MTT;
 	}
 	
 	/**
@@ -234,7 +251,7 @@ public class VoxelT2 extends Voxel{
 		//double min = StatUtils.min(contrastRaw);
 	
 		double minLoc = StatUtils.min(contrastRaw, (int) MMC, (int) (contrastRaw.length - MMC));
-		//double minLoc = StatUtils.min(contrastRaw, 0,40);
+		
 		return FastMath.abs(minLoc) > StatUtils.max(contrastRaw) * k;
 	}
 	
