@@ -44,7 +44,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 		Calibration cal = ip.getCalibration();
 		this.setCalibration(cal);
 		this.cal = cal;
-		//this.setType(ImagePlus.GRAY32);
+		
 
 	}
 
@@ -132,8 +132,6 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 
 	@Override
 	public Iterator<Voxel> iterator() {
-		// TODO no se muy bien como va
-		// return new ImagePlusHypIterator(this);
 		return new voxIterator(this);
 	}
 

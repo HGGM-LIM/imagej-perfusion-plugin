@@ -17,7 +17,6 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import javax.swing.JCheckBox;
 
 import javax.swing.JDialog;
@@ -50,12 +49,10 @@ public class AIF implements ItemListener, WindowListener {
 
 		}
 		probAIFs = MathAIF.getAIFs(AIFValid);
-		AIF = MathAIF.getAIF(probAIFs, true);
-		/*
-		 * autoGamma AI = new
-		 * autoGamma(AIF,MathUtils.minL(AIF),MathUtils.minR(AIF)); AI.fitting();
-		 * AIF =AI.getFit();
-		 */
+		if (!probAIFs.isEmpty())
+			AIF = MathAIF.getAIF(probAIFs, true);
+		else
+			AIF = new double[AllVoxels.get(0).contrastRaw.length];
 
 	}
 
@@ -75,13 +72,17 @@ public class AIF implements ItemListener, WindowListener {
 	public List<VoxelT2> getProbAIFs() {
 		return probAIFs;
 	}
-	
+
 	public void setAIFfit(fitter f) {
 		f.setup(AIF, MathUtils.minL(AIF), MathUtils.minR(AIF));
-		f.fitting();
-		AIFfit = f.getFit();
+		boolean fitted = f.fitting();
+		if (fitted == true)
+			AIFfit = f.getFit();
+		else {
+			IJ.showMessage("It was impossible to fit the selected AIF \nClick OK and select again");
+		}
 	}
-	
+
 	public double[] getAIFfit() {
 		return AIFfit;
 	}
@@ -106,17 +107,25 @@ public class AIF implements ItemListener, WindowListener {
 
 	public void paintChart() {
 		double[] x = new double[AIF.length];
+		double contMax, contMin;
 		for (int i = 0; i < x.length; i++)
 			x[i] = i;
 		AIFChart = new Plot("AIF", "Time", "Contrast", x, AIF);
-		double contMax = StatUtils.max(AIF) > StatUtils.max(AIFfit) ? StatUtils.max(AIF) : StatUtils.max(AIFfit);
-		double contMin = StatUtils.min(AIF) < StatUtils.min(AIFfit) ? StatUtils.min(AIF) : StatUtils.min(AIFfit);
-		AIFChart.setLimits(StatUtils.min(x),StatUtils.max(x),contMin,contMax);
-		//setAIFfit(new autoGamma());
-		AIFChart.addPoints(x, AIFfit, Plot.LINE);
-		AIFChart.setColor(java.awt.Color.RED);
-		//AIFChart.setLimits(0, 39, 0, 3);
-		
+		if (AIFfit != null) {
+			contMax = StatUtils.max(AIF) > StatUtils.max(AIFfit) ? StatUtils
+					.max(AIF) : StatUtils.max(AIFfit);
+			contMin = StatUtils.min(AIF) < StatUtils.min(AIFfit) ? StatUtils
+					.min(AIF) : StatUtils.min(AIFfit);
+		} else {
+			contMax = StatUtils.max(AIF);
+			contMin = StatUtils.min(AIF);
+		}
+		AIFChart.setLimits(StatUtils.min(x), StatUtils.max(x), contMin, contMax);
+		if (AIFfit != null) {
+			AIFChart.addPoints(x, AIFfit, Plot.LINE);
+			AIFChart.setColor(java.awt.Color.RED);
+		}
+
 		if (AIFWindow != null)
 			AIFWindow.close();
 
@@ -129,10 +138,10 @@ public class AIF implements ItemListener, WindowListener {
 				"Have you selected your own ROIs?\nSelect the ROIs you want to use"
 						+ " and click OK", JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.DEFAULT_OPTION, null);
-		
+
 		jo.setEnabled(true);
 		JDialog dialog2 = jo.createDialog("AIF Validation");
-		
+
 		dialog2.setModalityType(ModalityType.DOCUMENT_MODAL);
 		dialog2.setVisible(true);
 		AIF = MathAIF.getAIF(voxelsROI(voxels), true);
@@ -166,6 +175,8 @@ public class AIF implements ItemListener, WindowListener {
 		for (int i = 0; i < rois.length; i++) {
 			// int z = rois[i].getZPosition();
 			int z2 = manager.getSliceNumber(rois[i].getName());
+			if (z2 == -1)
+				z2 = 1;
 			int fromIn = -1, toIn = -1;
 			int[][] points = getPointsROI(rois[i]);
 

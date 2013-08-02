@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -19,12 +18,11 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 
 public class JPerfusionTool_ implements PlugInFilter, ActionListener {
-	//String path = IJ
-		//	.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
+	String path = IJ
+			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 
 	ImagePlus hyStack;
 	List<VoxelT2> nonAllVoxels;
-	// private JPanel main_panel;
 	MainFrame mf;
 
 	@Override
@@ -38,18 +36,23 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	}
 
 	public void doIt() {
-
+		/*
+		 * long time_start, time_end; time_start = System.currentTimeMillis();
+		 */
+		// TODO problemas con calibrat
 		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
 
 		/******* Masking *****************/
-		// IJ.showMessage("Aqui");
-		int[] thresholds = new int[myHypStk.getNSlices()];
-		double max = 0, maxAux = 0;
-		VoxelT2 vMax = null;
-		int a = hyStack.getNSlices() / 2;
 
-		int thr = (int) (myHypStk.getThreshold(a == 0 ? 1 : a)  /*/ 1.1*/ );
+		int[] thresholds = new int[myHypStk.getNSlices()];
+		double max = 0;
+
+		int a = hyStack.getNSlices() / 2;
+		// double t = Double.valueOf( mf.ThrField.getText());
+		int thr = (int) (myHypStk.getThreshold(a == 0 ? 1 : a) / Double
+				.valueOf(mf.ThrField.getText()));
 		for (int i = 1; i <= myHypStk.getNSlices(); i++) {
+			/* Able to select different threshold per slice */
 			// thresholds[i-1]=(int) (myHypStk.getThreshold(i));
 			thresholds[i - 1] = thr;
 		}
@@ -60,13 +63,10 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 		while (voxIterator2.hasNext()) {
 			VoxelT2 v = (VoxelT2) voxIterator2.next(thresholds);
-			// VoxelT2 v = (VoxelT2) voxIterator2.next(1.5);
-			// TODO COGER SOLO LOS NO ENMASCARDADOS
-			// TODO Ojo te=-1
 			// if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
 			// System.out.println();
 			if (mf.sFit.isSelected() == true && v != null && v.te == -1
-					&& v.notFalling(10))
+					&& v.notFalling((int) (hyStack.getNFrames() * 0.25 + 1)))
 				v.te = v.contrastRaw.length - 1;
 			if (v != null && v.t0 > 0 && v.te > 0) {
 				nonAllVoxels.add(v);
@@ -79,8 +79,9 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			}
 
 		}
+		IJ.showStatus("All meaninful voxels added");
 
-		new vecToStack(myHypStk, nonAllVoxels, 30000, "Nada");
+		new vecToStack(myHypStk, nonAllVoxels, "Nada");
 
 		/******************* FITTING **************************/
 		// TODO Cast different fittings.
@@ -110,13 +111,13 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		double[] AIF = aifO.getAIF();
 		aifO.setAIFfit(f);
 		// //////////////////////
-		AIF = aifO.getAIFfit();
+		if (aifO.getAIFfit() != null)
+			AIF = aifO.getAIFfit();
 		JOptionPane jop = new JOptionPane("Are you happy enough with the AIF?",
 				JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
-		
+
 		jop.setEnabled(true);
 		JDialog dialog = jop.createDialog("AIF Validation");
-		
 
 		dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
 		// dialog.setVisible(true);
@@ -127,14 +128,13 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			aifO.paintChart();
 			dialog.setVisible(true);
 			b = (int) jop.getValue();
-			if (b == 1){
+			if (b == 1) {
 				aifO.manualCalc(nonAllVoxels);
-			    aifO.setAIFfit(f);
-			   AIF = aifO.getAIFfit();
+				aifO.setAIFfit(f);
+				AIF = aifO.getAIFfit();
 			}
 
 		}
-		
 
 		// //////////////////////////////////////
 		VoxelT2 sM = null;
@@ -151,7 +151,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 		}
 
-		new vecToStack(myHypStk, nonAllVoxels, maxCBV, "CBV");
+		new vecToStack(myHypStk, nonAllVoxels, "CBV");
 		new EventUtils(IJ.getImage(), nonAllVoxels, mf.showCont, ch).turnOn();
 
 		/*********** Contrast without AIF influence ************/
@@ -161,7 +161,6 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		double[][] matrixPAIF = MathUtils.pInvMon(matrixAIF);
 		double minMTT = 100, maxMTT = 0;
 		VoxelT2 sliM = null, slim = null;
-		;
 
 		for (VoxelT2 v : nonAllVoxels) {
 			if (v.AIFValid == true)
@@ -186,15 +185,30 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 		}
 
-		new vecToStack(myHypStk, nonAllVoxels, maxMTT, "MTT");
-		new vecToStack(myHypStk, nonAllVoxels, maxCBV, "CBF");
+		new vecToStack(myHypStk, nonAllVoxels, "MTT");
+		new vecToStack(myHypStk, nonAllVoxels, "CBF");
 		RoiManager.getInstance().setVisible(true);
+		/*
+		 * time_end = System.currentTimeMillis();
+		 * System.out.println("the task has taken "+ ( time_end - time_start )
+		 * +" milliseconds");
+		 */
 	}
 
 	@Override
 	public int setup(String arg0, ImagePlus arg1) {
-		hyStack = arg1;
-		return DOES_ALL + STACK_REQUIRED;
+		if (!arg1.isHyperStack()) {
+			if (arg1.getNChannels() == 1 && arg1.getNSlices() == 1
+					&& arg1.getNFrames() > 1) {
+				hyStack = arg1;
+				return DOES_ALL + STACK_REQUIRED;
+			}
+			IJ.error("This plugin only works on HyperStacks.");
+			return DONE;
+		} else {
+			hyStack = arg1;
+			return DOES_ALL + STACK_REQUIRED;
+		}
 	}
 
 	private fitter getFitter(Object object) {

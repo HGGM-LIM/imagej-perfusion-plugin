@@ -6,7 +6,7 @@ import ij.measure.Calibration;
 
 public class vecToStack extends ImagePlus {
 
-	public vecToStack(ImagePlus ip, List<VoxelT2> voxels, double max,String param) {
+	public vecToStack(ImagePlus ip, List<VoxelT2> voxels,String param) {
 		double parameter = 0;
 		int[] dim = ip.getDimensions();
 		//ImagePlus res = IJ.createImage(ip.getTitle(),"16-bit", dim[0], dim[1],
@@ -14,7 +14,7 @@ public class vecToStack extends ImagePlus {
 		ImagePlus res = IJ.createImage(ip.getTitle(),"32-bit", dim[0], dim[1],
 				dim[3]);
 		res.setDimensions(1, dim[3], 1);
-		res.setDisplayRange(0, max);
+		//res.setDisplayRange(0, max);
 		
 
 		if (param == "CBV")
@@ -38,7 +38,7 @@ public class vecToStack extends ImagePlus {
 			 else if(param == "Nada")
 				 parameter = v.tac[0];
 
-			target.setVoxel(v.x, v.y, v.slice - 1,  parameter*512/max);
+			target.setVoxel(v.x, v.y, v.slice - 1,  parameter/**512/max*/);
 		}
 		 Calibration cal = ip.getCalibration();
 	        double size_x = cal.pixelWidth;

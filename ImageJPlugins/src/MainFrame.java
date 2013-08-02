@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
+import javax.swing.JTextField;
 
 
 public class MainFrame extends JFrame {
@@ -21,6 +22,7 @@ public class MainFrame extends JFrame {
 	JCheckBox showCont;
 	JCheckBox AIFVoxels;
 	JButton startButton;
+	JTextField ThrField;
 
 	/**
 	 * Launch the application.
@@ -93,6 +95,17 @@ public class MainFrame extends JFrame {
 		AIFVoxels = new JCheckBox("Show AIF voxels");
 		AIFVoxels.setBounds(6, 151, 117, 23);
 		tabAIF.add(AIFVoxels);
+		
+		JLabel lblRelativeThreshold = new JLabel("Rel. Threshold");
+		lblRelativeThreshold.setBounds(10, 11, 69, 14);
+		tabAIF.add(lblRelativeThreshold);
+		
+		ThrField = new JTextField();
+		ThrField.setHorizontalAlignment(SwingConstants.CENTER);
+		ThrField.setText("1");
+		ThrField.setBounds(85, 11, 53, 14);
+		tabAIF.add(ThrField);
+		ThrField.setColumns(10);
 	}
 	
 	public Object getCombo() {
