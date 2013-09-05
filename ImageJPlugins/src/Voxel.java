@@ -1,6 +1,6 @@
 
 
-public class Voxel implements Comparable{
+public class Voxel implements Comparable<Voxel>{
 
 	/* X coordinate */
 	public final int x;
@@ -38,8 +38,8 @@ public class Voxel implements Comparable{
 
 
 	@Override
-	public int compareTo(Object o) {
-		Voxel v = (Voxel) o;
+	public int compareTo(Voxel o) {
+		Voxel v = o;
 		if(slice == v.slice && x == v.x && y == v.y  )
 			return 1;
 		return 0;
