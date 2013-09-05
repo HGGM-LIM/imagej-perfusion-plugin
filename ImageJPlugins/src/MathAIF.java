@@ -18,37 +18,34 @@ public class MathAIF {
 		int MMC = MathUtils.whereIs(function, MC);
 		result[0] = MC;
 		result[1] = MMC;
-		result[2] = getFWHM(function,MC,MMC);
-	
-		
-	
+		result[2] = getFWHM(function, MC, MMC);
 
 		return result;
 	}
-	
-	public static double getFWHM (double[] f,double MC,int MMC) {
+
+	public static double getFWHM(double[] f, double MC, int MMC) {
 		int t1 = MMC - 1, t2 = MMC + 1;
 		double result;
 		try {
 			while (f[t1] >= MC / 2)
-				if (f[t1] <= f[t1 + 1]	|| f[t1 - 1] <= f[t1])
+				if (f[t1] <= f[t1 + 1] || f[t1 - 1] <= f[t1])
 					t1--;
 				else
 					t1 = -1;
 
 			while (f[t2] >= MC / 2)
-				if (f[t2] <= f[t2 - 1]	|| f[t2 + 1] <= f[t2])
+				if (f[t2] <= f[t2 - 1] || f[t2 + 1] <= f[t2])
 					t2++;
 				else
 					t2 = f.length;
 
-			result=  t2 - t1;
+			result = t2 - t1;
 
 		} catch (ArrayIndexOutOfBoundsException e) { /*
 													 * Just in case is not
 													 * possible find out FWHM
 													 */
-			result =  Double.NaN;
+			result = Double.NaN;
 		}
 		return result;
 	}
@@ -60,42 +57,38 @@ public class MathAIF {
 		MCs = new double[dim];
 		FWHMs = new double[dim];
 		for (int i = 0; i < voxels.size(); i++) {
-		
-			MCs[i] =  voxels.get(i).getMC();
-			MMCs[i] =  voxels.get(i).getMMC();
-			FWHMs[i] =  voxels.get(i).getFWHM();
-		
+
+			MCs[i] = voxels.get(i).getMC();
+			MMCs[i] = voxels.get(i).getMMC();
+			FWHMs[i] = voxels.get(i).getFWHM();
 
 		}
-		System.out.println(StatUtils.max(MCs)+" "+MathUtils.whereIs(MCs, StatUtils.max(MCs)));
-		
-		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,StatUtils.max(MCs) * 0.0);
+		System.out.println(StatUtils.max(MCs) + " "
+				+ MathUtils.whereIs(MCs, StatUtils.max(MCs)));
 
-		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs,MCs);
-		 List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
+		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
+				StatUtils.max(MCs) * 0.0);
+
+		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs, MCs);
+		List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
 		for (int i = 0; i < probAIF.length; i++)
-			if (probAIF[i] == true){
+			if (probAIF[i] == true) {
 				posAIFs.add(voxels.get(biggerThanHMaxMC[i]));
 				voxels.get(biggerThanHMaxMC[i]).AIFValid = true;
-				
+
 			}
 
 		return posAIFs;
-		
 
 	}
-	
-	
-	public static double[] getAIF(List<VoxelT2> voxels,boolean meaningVoxels) {	
-		if (meaningVoxels==true) 
+
+	public static double[] getAIF(List<VoxelT2> voxels, boolean meaningVoxels) {
+		if (meaningVoxels == true)
 			return stimAIF(voxels);
 		else
-		return stimAIF(getAIFs(voxels));
-		
+			return stimAIF(getAIFs(voxels));
+
 	}
-	
-	
-    
 
 	/**
 	 * 
@@ -109,7 +102,7 @@ public class MathAIF {
 	 *         AIF, thus FWHM(AIF) = mean(FWHM) - 1.5 standard deviation (FWHM)
 	 */
 	private static boolean[] isAIF(int[] biggerThanHMaxMC, double[] MMCs,
-			double[] FWHMs,double[] MCs) {
+			double[] FWHMs, double[] MCs) {
 		double maxMC = 0;
 		boolean anyCoincidence = false;
 		double meanMMC = StatUtils.mean(MMCs);
@@ -122,72 +115,71 @@ public class MathAIF {
 		boolean[] probAIF = new boolean[biggerThanHMaxMC.length];
 		int j = 0;
 		for (int i : biggerThanHMaxMC) {
-			if (FWHMs[i] >= thrFWHM-1 && FWHMs[i] <=  (thrFWHM+1 ) &&  MMCs[i] >=  thrMMC-1 &&  MMCs[i] <=  thrMMC+1) {
-				
+			if (FWHMs[i] >= thrFWHM - 1 && FWHMs[i] <= (thrFWHM + 1)
+					&& MMCs[i] >= thrMMC - 1 && MMCs[i] <= thrMMC + 1) {
+
 				probAIF[j] = true;
 				anyCoincidence = true;
-				
-				if(MCs[i] > maxMC)
-					maxMC = MCs[i];	
+
+				if (MCs[i] > maxMC)
+					maxMC = MCs[i];
 			}
 
 			j++;
 		}
-		
+
 		int j2 = 0;
 		if (anyCoincidence == false) {
-		for (int i : biggerThanHMaxMC) {
-			if ( FWHMs[i] <=  (thrFWHM ) &&  MMCs[i] >=  thrMMC-1 &&  MMCs[i] <=  thrMMC+1) {
-				
-				probAIF[j2] = true;
-				anyCoincidence = true;
-				
-				if(MCs[i] > maxMC)
-					maxMC = MCs[i];	
-			}
+			for (int i : biggerThanHMaxMC) {
+				if (FWHMs[i] <= (thrFWHM) && MMCs[i] >= thrMMC - 1
+						&& MMCs[i] <= thrMMC + 1) {
 
-			j2++;
+					probAIF[j2] = true;
+					anyCoincidence = true;
+
+					if (MCs[i] > maxMC)
+						maxMC = MCs[i];
+				}
+
+				j2++;
+			}
 		}
-		}
-		int j3=0;
+		int j3 = 0;
 		if (anyCoincidence == false) {
 			for (int i : biggerThanHMaxMC) {
-				if ( FWHMs[i] <=  (meanFWHM/2 ) &&  MMCs[i] < meanMMC/2) {
-					
+				if (FWHMs[i] <= (meanFWHM / 2) && MMCs[i] < meanMMC / 2) {
+
 					probAIF[j3] = true;
 					anyCoincidence = true;
-				
-			}
+
+				}
 				j3++;
+			}
 		}
-		}
-		
-		
-		
-		
-		for(int i = 0; i < probAIF.length; i++)
-			if(probAIF[i] == true && MCs[i] < 0.5 * maxMC)
+
+		for (int i = 0; i < probAIF.length; i++)
+			if (probAIF[i] == true && MCs[i] < 0.5 * maxMC)
 				probAIF[i] = false;
-				
-		
-		/*if (anyCoincidence == false)
-			for (int i =0; i < probAIF.length; i++)
-				probAIF[i] = true;*/
-		
+
+		/*
+		 * if (anyCoincidence == false) for (int i =0; i < probAIF.length; i++)
+		 * probAIF[i] = true;
+		 */
+
 		return probAIF;
 
 	}
 
 	private static double[] stimAIF(List<VoxelT2> posAIFs) {
 		double[] result = new double[(posAIFs.get(0)).contrastRaw.length];
-		
+
 		for (int i = 0; i < result.length; i++) {
 			double[] insContrastRaw = new double[posAIFs.size()];
 			for (int j = 0; j < posAIFs.size(); j++)
 				insContrastRaw[j] = (posAIFs.get(j)).contrastRaw[i];
 
 			result[i] = MathUtils.mEsti(insContrastRaw);
-			//if (result[i] < 0) result[i] = 0;
+			// if (result[i] < 0) result[i] = 0;
 		}
 		return result;
 	}

@@ -1,3 +1,5 @@
+import ij.IJ;
+
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -314,10 +316,14 @@ public class MathUtils {
 		SingularValueDecomposition svd = new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
 				false));
 		int rank = svd.getRank();
+		/*double [] sinV = svd.getSingularValues();
+				double [] cag = new double[rank];
+		for (int i = 0; i < rank; i++)
+			cag[i] = sinV[i];*/
 		trunS = svd.getS().getSubMatrix(0, rank -1, 0, rank -1);
 		trunV = svd.getV().getSubMatrix(0,aif[0].length - 1, 0, rank -1);
 		trunUTrans = svd.getUT().getSubMatrix(0,  rank -1, 0, aif[0].length - 1);
-		
+		//IJ.showMessage(" " +interBad(cag) / interBad(svd.getSingularValues()));
 		return trunV.multiply(trunS).multiply(trunUTrans).getData();
 		
 		/*return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,

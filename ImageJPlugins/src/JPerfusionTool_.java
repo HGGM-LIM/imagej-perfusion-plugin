@@ -13,6 +13,7 @@ import org.apache.commons.math3.util.FastMath;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
+import ij.gui.PointRoi;
 import ij.plugin.filter.PlugInFilter;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
@@ -22,7 +23,8 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 
 	ImagePlus hyStack;
-	List<VoxelT2> nonAllVoxels;
+	List<VoxelT2> nonAllVoxels,notFit;
+
 	MainFrame mf;
 
 	@Override
@@ -43,7 +45,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
 
 		/******* Masking *****************/
-
+		
 		int[] thresholds = new int[myHypStk.getNSlices()];
 		double max = 0;
 
@@ -60,7 +62,9 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		IJ.showStatus("Addig Voxels...");
 		voxIterator voxIterator2 = (voxIterator) myHypStk.iterator();
 		nonAllVoxels = new ArrayList<VoxelT2>();
-
+		notFit = new ArrayList<VoxelT2>();
+		
+		boolean fBool = mf.comboFitting.getSelectedItem().toString() == "NoFitter";
 		while (voxIterator2.hasNext()) {
 			VoxelT2 v = (VoxelT2) voxIterator2.next(thresholds);
 			// if(v != null&& v.x>= 61 && v.y >= 46 && v.slice == 23)
@@ -68,7 +72,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			if (mf.sFit.isSelected() == true && v != null && v.te == -1
 					&& v.notFalling((int) (hyStack.getNFrames() * 0.25 + 1)))
 				v.te = v.contrastRaw.length - 1;
-			if (v != null && v.t0 > 0 && v.te > 0) {
+			if (v != null && ( fBool || (v.t0 > 0 && v.te > 0))  ) {
 				nonAllVoxels.add(v);
 
 				if (StatUtils.max(v.contrastRaw) > max) {
@@ -76,9 +80,11 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 				}
 				// System.out.println(nonAllVoxels.size());
-			}
+			} else if (v != null)
+				notFit.add(v);
 
 		}
+		EventUtils.showPointsOverlays(notFit);
 		IJ.showStatus("All meaninful voxels added");
 
 		new vecToStack(myHypStk, nonAllVoxels, "Nada");
@@ -95,7 +101,8 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			// v.contrastFitted = null;
 			if (v.getContrastFitted() != null) {
 				v.setParams();
-			}
+			} 
+			
 		}
 		// //////////////////////////////////////////////////////////////
 
@@ -152,6 +159,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		}
 
 		new vecToStack(myHypStk, nonAllVoxels, "CBV");
+		
 		new EventUtils(IJ.getImage(), nonAllVoxels, mf.showCont, ch).turnOn();
 
 		/*********** Contrast without AIF influence ************/
@@ -169,9 +177,11 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 			double aMax = StatUtils.max(v.contrastEstim) > FastMath
 					.abs(StatUtils.min(v.contrastEstim)) ? 1 : -1;
+	
 			if (aMax > 0/* aMax < 1.2* StatUtils.max(v.contrastRaw) */) {
 				v.setMTT();
 				v.setCBF();
+				
 			}
 
 			if (v.getMTT() > maxMTT) {
@@ -221,6 +231,10 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		else if (object == "autoGamma")
 			return new autoGamma();
 		return null;
+	}
+	
+	private String getFitterName(fitter f) {
+		return f.getClass().getName();
 	}
 
 	@Override

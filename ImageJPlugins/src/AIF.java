@@ -36,6 +36,13 @@ public class AIF implements ItemListener, WindowListener {
 	JCheckBox jcb;
 	boolean cB;
 
+	/**
+	 * Class constructor
+	 * 
+	 * @param AllVoxels
+	 *            The selected voxels for calculating the AIF
+	 * @param max
+	 */
 	public AIF(List<VoxelT2> AllVoxels, double max) {
 		AIFValid = new ArrayList<VoxelT2>();
 		for (VoxelT2 v : AllVoxels) {
@@ -44,7 +51,7 @@ public class AIF implements ItemListener, WindowListener {
 					&& Double.compare(v.getFWHM(), 0) > 0 && !v.isNoisy(0.125)
 					&& v.getMC() > max / 8) {
 				AIFValid.add(v);
-				// v.AIFValid = true;
+
 			}
 
 		}
@@ -55,18 +62,31 @@ public class AIF implements ItemListener, WindowListener {
 			AIF = new double[AllVoxels.get(0).contrastRaw.length];
 
 	}
+	
+	/**
+	 * Class constructor, permits to create an AIF directly from the values
+	 * @param values
+	 */
 
 	public AIF(double[] values) {
 		probAIFs = null;
 		AIF = values;
 	}
 
+	/**
+	 * 
+	 * @return AIF values
+	 */
 	public double[] getAIF() {
 		return AIF;
 	}
 
-	public void setAIF(double[] aIF) {
-		AIF = aIF;
+	/**
+	 * Change the AIF values using the parameter
+	 * @param aIF new AIF  values
+	 */
+	public void setAIF(double[] AIF) {
+		this.AIF = AIF;
 	}
 
 	public List<VoxelT2> getProbAIFs() {
@@ -98,6 +118,7 @@ public class AIF implements ItemListener, WindowListener {
 				manager = new RoiManager();
 			IJ.runMacro("setSlice(" + v.slice + ")");
 			image.setRoi(pr);
+			manager.setName("AIF ROIs");
 			manager.addRoi(image.getRoi());
 			manager.runCommand("Associate", "true");
 			manager.setVisible(false);
@@ -133,6 +154,7 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	public void manualCalc(List<VoxelT2> voxels) {
+		manager.setName("AIF ROIs");
 		manager.setVisible(true);
 		JOptionPane jo = new JOptionPane(
 				"Have you selected your own ROIs?\nSelect the ROIs you want to use"
@@ -170,6 +192,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	public List<VoxelT2> voxelsROI(List<VoxelT2> allV) {
 		List<VoxelT2> res = new ArrayList<VoxelT2>();
+		manager.setName("AIF ROIs");
 		AIFSelect = manager;
 		Roi[] rois = AIFSelect.getRoisAsArray();
 		for (int i = 0; i < rois.length; i++) {

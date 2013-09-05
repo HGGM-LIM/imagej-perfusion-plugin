@@ -211,6 +211,8 @@ public class VoxelT2 extends Voxel {
 	public double[] getContrastFitted() {
 		return contrastFitted;
 	}
+	
+	
 
 	/**
 	 * contrastFitted setter

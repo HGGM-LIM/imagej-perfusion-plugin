@@ -18,11 +18,11 @@ import javax.swing.JTextField;
 public class MainFrame extends JFrame {
 	JComboBox comboFitting;
 	boolean startPressed;
-	JCheckBox sFit;
-	JCheckBox showCont;
 	JCheckBox AIFVoxels;
 	JButton startButton;
 	JTextField ThrField;
+	JCheckBox showCont;
+	 JCheckBox sFit;
 
 	/**
 	 * Launch the application.
@@ -75,21 +75,11 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		startButton.setBounds(137, 77, 89, 23);
+		startButton.setBounds(137, 108, 89, 23);
 		mainPanel.add(startButton);
 		
-		 sFit = new JCheckBox("S-Fitting");
-		 sFit.setSelected(true);
-		 sFit.setEnabled(false);
-		sFit.setBounds(6, 151, 97, 23);
-		mainPanel.add(sFit);
-		
-		 showCont = new JCheckBox("Show Contrast w/ mouseMove.");
-		showCont.setBounds(6, 125, 198, 23);
-		mainPanel.add(showCont);
-		
 		JPanel tabAIF = new JPanel();
-		tabbedPane.addTab("AIF ", null, tabAIF, null);
+		tabbedPane.addTab("Parameters ", null, tabAIF, null);
 		tabAIF.setLayout(null);
 		
 		AIFVoxels = new JCheckBox("Show AIF voxels");
@@ -106,6 +96,16 @@ public class MainFrame extends JFrame {
 		ThrField.setBounds(85, 11, 53, 14);
 		tabAIF.add(ThrField);
 		ThrField.setColumns(10);
+		
+		showCont = new JCheckBox("Show Contrast w/ mouseMove.");
+		showCont.setBounds(6, 125, 198, 23);
+		tabAIF.add(showCont);
+		
+		sFit = new JCheckBox("S-Fitting");
+		sFit.setSelected(true);
+		sFit.setEnabled(false);
+		sFit.setBounds(6, 100, 97, 23);
+		tabAIF.add(sFit);
 	}
 	
 	public Object getCombo() {
