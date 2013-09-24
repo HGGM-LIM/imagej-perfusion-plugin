@@ -6,7 +6,7 @@ import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
-import java.awt.Color;
+
 import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
 
@@ -159,7 +159,7 @@ public class AIF implements ItemListener, WindowListener {
 		JOptionPane jo = new JOptionPane(
 				"Have you selected your own ROIs?\nSelect the ROIs you want to use"
 						+ " and click OK", JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.DEFAULT_OPTION, null);
+				JOptionPane.YES_NO_OPTION, null);
 
 		jo.setEnabled(true);
 		JDialog dialog2 = jo.createDialog("AIF Validation");

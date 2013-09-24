@@ -1,26 +1,26 @@
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
+
 import ij.gui.ImageCanvas;
-import ij.gui.ImageRoi;
+
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 
-import java.awt.BasicStroke;
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.ColorModel;
+
 import java.util.List;
 
 import javax.swing.JCheckBox;
 
-import org.apache.commons.math3.stat.StatUtils;
+
 
 public class EventUtils implements MouseListener, MouseMotionListener,
 		WindowListener {

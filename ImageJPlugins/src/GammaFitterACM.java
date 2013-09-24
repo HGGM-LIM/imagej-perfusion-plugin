@@ -4,9 +4,9 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 
-public class autoGamma extends fitter {
+public class GammaFitterACM extends fitter {
 	
-	public autoGamma(double[] cont, int t0, int te) {
+	public GammaFitterACM(double[] cont, int t0, int te) {
 		dim = cont.length;
 		tAxis = new double[dim];
 		for (int i = 0; i < dim; i++)
@@ -17,7 +17,7 @@ public class autoGamma extends fitter {
 		this.t0 = t0;
 		this.te = te;
 	}
-	public autoGamma() {
+	public GammaFitterACM() {
 		
 	}
 
@@ -25,7 +25,7 @@ public class autoGamma extends fitter {
 	public boolean fitting() {
 		// TODO Auto-generated method stub
 		if(t0 > 0 && te > 0 ) {
-		CurveFitter fitt = new CurveFitter(new LevenbergMarquardtOptimizer());
+		CurveFitter<linearGamma> fitt = new CurveFitter<linearGamma>(new LevenbergMarquardtOptimizer());
 		intPoin(fitt);
 		double[] best;
 		double[] ord ={1,1,1};
@@ -55,7 +55,7 @@ public class autoGamma extends fitter {
 		return fittedCont;
 	}
 	
-	private void intPoin(CurveFitter fitter) {
+	private void intPoin(CurveFitter<linearGamma> fitter) {
 		//int t0 = MathUtils.minL(vals)-1;
 		//int te = MathUtils.minR(vals);
 		for(int i=t0+1; i <= te ; i++) 

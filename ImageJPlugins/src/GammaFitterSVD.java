@@ -7,7 +7,7 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
-public class GammaFitter extends fitter {
+public class GammaFitterSVD extends fitter {
 	/* Original data to be fitted */
 	// private double[] tAxis;
 	// private double[] contAxis;
@@ -27,14 +27,14 @@ public class GammaFitter extends fitter {
 	/*
 	 * Constructor Implementation Initially with the original curve data
 	 */
-	public GammaFitter(double[] t, double[] cont) {
+	public GammaFitterSVD(double[] t, double[] cont) {
 		tAxis = t;
 		contAxis = cont;
 		dim = t.length;
 		fittedCont = new double[dim];
 	}
 
-	public GammaFitter(double[] cont) {
+	public GammaFitterSVD(double[] cont) {
 		dim = cont.length;
 		tAxis = new double[dim];
 		for (int i = 0; i < dim; i++)
@@ -46,7 +46,7 @@ public class GammaFitter extends fitter {
 		fittedCont = new double[dim];
 	}
 
-	public GammaFitter(double[] cont, int t0, int te) {
+	public GammaFitterSVD(double[] cont, int t0, int te) {
 		dim = cont.length;
 		tAxis = new double[dim];
 		for (int i = 0; i < dim; i++)
@@ -58,7 +58,7 @@ public class GammaFitter extends fitter {
 		this.te = te;
 	}
 
-	public GammaFitter() {
+	public GammaFitterSVD() {
 
 	}
 

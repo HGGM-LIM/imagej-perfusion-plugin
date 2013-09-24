@@ -13,7 +13,7 @@ import org.apache.commons.math3.util.FastMath;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
-import ij.gui.PointRoi;
+
 import ij.plugin.filter.PlugInFilter;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
@@ -82,8 +82,10 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 				// System.out.println(nonAllVoxels.size());
 			} else if (v != null)
 				notFit.add(v);
-
+			
 		}
+		
+		
 		EventUtils.showPointsOverlays(notFit);
 		IJ.showStatus("All meaninful voxels added");
 
@@ -120,7 +122,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		// //////////////////////
 		if (aifO.getAIFfit() != null)
 			AIF = aifO.getAIFfit();
-		JOptionPane jop = new JOptionPane("Are you happy enough with the AIF?",
+		JOptionPane jop = new JOptionPane("               Is the AIF valid?",
 				JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
 
 		jop.setEnabled(true);
@@ -144,7 +146,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		}
 
 		// //////////////////////////////////////
-		VoxelT2 sM = null;
+		
 		double maxCBV = 0;
 		double aifInt = MathUtils.interBad(AIF);
 		for (VoxelT2 v : nonAllVoxels) {
@@ -153,7 +155,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 				v.setCBV(aifInt);
 			if (maxCBV < v.getCBV()) {
 				maxCBV = v.getCBV();
-				sM = v;
+				
 			}
 
 		}
@@ -168,7 +170,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		double[][] matrixAIF = MathUtils.lowTriangular(AIF);
 		double[][] matrixPAIF = MathUtils.pInvMon(matrixAIF);
 		double minMTT = 100, maxMTT = 0;
-		VoxelT2 sliM = null, slim = null;
+		
 
 		for (VoxelT2 v : nonAllVoxels) {
 			if (v.AIFValid == true)
@@ -186,11 +188,11 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 			if (v.getMTT() > maxMTT) {
 				maxMTT = v.getMTT();
-				sliM = v;
+				
 			}
 			if (v.getMTT() < minMTT) {
 				minMTT = v.getMTT();
-				slim = v;
+				
 			}
 
 		}
@@ -223,19 +225,16 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 	private fitter getFitter(Object object) {
 		if (object == "Auto")
-			return new autoGamma();
+			return new GammaFitterACM();
 		else if (object == "NoFitter")
 			return new NoFitter();
-		else if (object == "GammaFitter")
-			return new GammaFitter();
-		else if (object == "autoGamma")
-			return new autoGamma();
+		else if (object == "GammaFitterSVD")
+			return new GammaFitterSVD();
+		else if (object == "GammaFitterACM")
+			return new GammaFitterACM();
 		return null;
 	}
 	
-	private String getFitterName(fitter f) {
-		return f.getClass().getName();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
