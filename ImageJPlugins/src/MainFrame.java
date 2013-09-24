@@ -19,7 +19,7 @@ import java.awt.Toolkit;
 
 
 public class MainFrame extends JFrame {
-	JComboBox comboFitting;
+	JComboBox<?> comboFitting;
 	boolean startPressed;
 	JCheckBox AIFVoxels;
 	JButton startButton;

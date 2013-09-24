@@ -6,7 +6,6 @@ import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
-
 import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
 
@@ -24,7 +23,20 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.math3.stat.StatUtils;
 
+/**
+ * AIF class contains the voxels used for Arterial Input Function calculation
+ * and the fitted version. Also implements the methods for the AIF properties
+ * visualitation
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ *         Gordaliza</a>
+ * 
+ */
 public class AIF implements ItemListener, WindowListener {
+	/*
+	 * AIFValid contains the voxels used for the AIF calculation while probAIFs
+	 * contains all the possible voxels for the AIF calcualtion
+	 */
 	private List<VoxelT2> probAIFs;
 	private List<VoxelT2> AIFValid;
 	private double[] AIF;
@@ -42,11 +54,12 @@ public class AIF implements ItemListener, WindowListener {
 	 * @param AllVoxels
 	 *            The selected voxels for calculating the AIF
 	 * @param max
+	 *            The maximum value in the set of curves
 	 */
 	public AIF(List<VoxelT2> AllVoxels, double max) {
 		AIFValid = new ArrayList<VoxelT2>();
 		for (VoxelT2 v : AllVoxels) {
-			// TODO 0.75 por dependiente del max
+			/* Make it maximum dependent */
 			if (Double.compare(v.getFWHM(), Double.NaN) != 0
 					&& Double.compare(v.getFWHM(), 0) > 0 && !v.isNoisy(0.125)
 					&& v.getMC() > max / 8) {
@@ -62,10 +75,12 @@ public class AIF implements ItemListener, WindowListener {
 			AIF = new double[AllVoxels.get(0).contrastRaw.length];
 
 	}
-	
+
 	/**
 	 * Class constructor, permits to create an AIF directly from the values
+	 * 
 	 * @param values
+	 *            new values for the AIF to be considered.
 	 */
 
 	public AIF(double[] values) {
@@ -83,16 +98,29 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Change the AIF values using the parameter
-	 * @param aIF new AIF  values
+	 * 
+	 * @param AIF
+	 *            new AIF values
 	 */
 	public void setAIF(double[] AIF) {
 		this.AIF = AIF;
 	}
 
+	/**
+	 * Get for the voxels whit AIF properties
+	 * 
+	 * @return probAIFs
+	 */
 	public List<VoxelT2> getProbAIFs() {
 		return probAIFs;
 	}
 
+	/**
+	 * Permits to fit the AIF by using a fitter extended from {@link fitter}
+	 * 
+	 * @param f
+	 *            The kind of {@link fitter}
+	 */
 	public void setAIFfit(fitter f) {
 		f.setup(AIF, MathUtils.minL(AIF), MathUtils.minR(AIF));
 		boolean fitted = f.fitting();
@@ -103,10 +131,22 @@ public class AIF implements ItemListener, WindowListener {
 		}
 	}
 
+	/**
+	 * Return the values AIF fitted curve v
+	 * 
+	 * @return AIFfit
+	 */
 	public double[] getAIFfit() {
 		return AIFfit;
 	}
 
+	/**
+	 * Draw the voxels used for the AIF calculation ( {@link #probAIFs} ) within
+	 * the {@link ImagePlus} selected
+	 * 
+	 * @param image
+	 *            The {@link ImagePlus}
+	 */
 	public void paint(ImagePlus image) {
 		manager = RoiManager.getInstance();
 		for (VoxelT2 v : probAIFs) {
@@ -126,6 +166,10 @@ public class AIF implements ItemListener, WindowListener {
 
 	}
 
+	/**
+	 * Displays the AIF calculated and its fitted version
+	 * 
+	 */
 	public void paintChart() {
 		double[] x = new double[AIF.length];
 		double contMax, contMin;
@@ -153,6 +197,12 @@ public class AIF implements ItemListener, WindowListener {
 		AIFWindow = AIFChart.show();
 	}
 
+	/**
+	 * Implements the way for calculating AIF from a list of {@link VoxelT2}
+	 * 
+	 * @param voxels
+	 *            The {@link VoxelT2}
+	 */
 	public void manualCalc(List<VoxelT2> voxels) {
 		manager.setName("AIF ROIs");
 		manager.setVisible(true);
@@ -169,7 +219,6 @@ public class AIF implements ItemListener, WindowListener {
 		AIF = MathAIF.getAIF(voxelsROI(voxels), true);
 	}
 
-	@Override
 	public void itemStateChanged(ItemEvent e) {
 		jcb = (JCheckBox) e.getSource();
 		if (manager == null && jcb.isSelected()) {
@@ -190,6 +239,15 @@ public class AIF implements ItemListener, WindowListener {
 		}
 	}
 
+	/**
+	 * Implements a way for getting the voxels from a {@link Roi} selected by
+	 * the user using the {@link RoiManager}
+	 * 
+	 * @param allV
+	 *            The whole set of voxels within the {@link ImagePlus} where the
+	 *            user select the ROIs
+	 * @return The voxels selected by the user
+	 */
 	public List<VoxelT2> voxelsROI(List<VoxelT2> allV) {
 		List<VoxelT2> res = new ArrayList<VoxelT2>();
 		manager.setName("AIF ROIs");
@@ -236,6 +294,12 @@ public class AIF implements ItemListener, WindowListener {
 
 	}
 
+	/**
+	 * Obtains the coordinates from voxels inside a {@link Roi}
+	 * 
+	 * @param roi
+	 * @return An array with the points inside the ROI
+	 */
 	public static int[][] getPointsROI(Roi roi) {
 		// TODO line case
 		int n = 0;
@@ -253,10 +317,8 @@ public class AIF implements ItemListener, WindowListener {
 				n++; // count points in mask
 		}
 
-		// Point[] pointRes = new Point[r.height * r.width];
-		// Point[] pointRes = new Point[n];
 		int[][] poin = new int[2][n];
-		// int i = 0;
+
 		/*
 		 * By the type is possible to know the Roi's shape,the multi-point ROI
 		 * is considered as well as a ROI type so is neccesary to restrict and
@@ -266,11 +328,6 @@ public class AIF implements ItemListener, WindowListener {
 			poin[0][0] = r.x;
 			poin[1][0] = r.y;
 		} else {
-			/*
-			 * for(int y = r.y; y <= r.y + r.height; y++) for (int x = r.x; x <=
-			 * r.x + r.width; x++) { if (roi.contains(x, y)) { pointRes[i] = new
-			 * Point(x,y); i++; } }
-			 */
 
 			int h = 0;
 			int z = 0;
@@ -289,45 +346,27 @@ public class AIF implements ItemListener, WindowListener {
 		return poin;
 	}
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void windowClosed(WindowEvent e) {
 		jcb.setSelected(false);
 	}
 
-	@Override
+	// Unimplemented Methods
+	public void windowOpened(WindowEvent e) {
+	}
+
+	public void windowClosing(WindowEvent e) {
+	}
+
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

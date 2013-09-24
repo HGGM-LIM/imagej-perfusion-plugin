@@ -1,4 +1,3 @@
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -7,6 +6,14 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
+/**
+ * Extends {@link fitter} in order to use the SVD approximation to solve least
+ * squares model for fitting
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ *         Gordaliza</a>
+ * 
+ */
 public class GammaFitterSVD extends fitter {
 	/* Original data to be fitted */
 	// private double[] tAxis;
@@ -24,8 +31,11 @@ public class GammaFitterSVD extends fitter {
 	/* window parameters */
 	// private int t0,te; //
 
-	/*
+	/**
 	 * Constructor Implementation Initially with the original curve data
+	 * 
+	 * @param t
+	 * @param cont
 	 */
 	public GammaFitterSVD(double[] t, double[] cont) {
 		tAxis = t;
@@ -34,6 +44,12 @@ public class GammaFitterSVD extends fitter {
 		fittedCont = new double[dim];
 	}
 
+	/**
+	 * Creates the GammaFitter setting {@link fitter#contAxis},
+	 * {@link fitter#t0}, {@link fitter#te}
+	 * 
+	 * @param cont
+	 */
 	public GammaFitterSVD(double[] cont) {
 		dim = cont.length;
 		tAxis = new double[dim];
@@ -46,6 +62,11 @@ public class GammaFitterSVD extends fitter {
 		fittedCont = new double[dim];
 	}
 
+	/**
+	 * @param cont
+	 * @param t0
+	 * @param te
+	 */
 	public GammaFitterSVD(double[] cont, int t0, int te) {
 		dim = cont.length;
 		tAxis = new double[dim];
@@ -58,15 +79,22 @@ public class GammaFitterSVD extends fitter {
 		this.te = te;
 	}
 
+	/**
+	 * 
+	 */
 	public GammaFitterSVD() {
 
 	}
 
-	// MEJORAS EN LA BUSQUEDA DADO QUE PODRÍA REPETIR VALORES YA DESCARTADOS
+	/**
+	 * Calculates the {@link fitter#t0}
+	 * 
+	 * @param increase
+	 *            Minimum distance from the maximum in {@link fitter#contAxis}
+	 */
 	public void calcT0(int increase) {
 		t0 = -1; // EXCEPCIÓN CUANDO ESTO PASE
-		// TODO CUANDO te pasas del máximo
-		// int tMax = new ArrayRealVector(contAxis).getMaxIndex();
+
 		try {
 			int tMax = MathUtils.whereIs(contAxis, StatUtils.max(contAxis));
 			boolean locatedT0 = false;
@@ -96,6 +124,12 @@ public class GammaFitterSVD extends fitter {
 
 	}
 
+	/**
+	 * Calculates the {@link fitter#te}
+	 * 
+	 * @param increase
+	 *            Minimum distance from the maximum in {@link fitter#contAxis}
+	 */
 	public void calcT(int increase) {
 		te = -1;
 		double max = StatUtils.max(contAxis);
@@ -116,11 +150,6 @@ public class GammaFitterSVD extends fitter {
 					while (ti < contAxis.length - 1
 							&& contAxis[ti] > contAxis[ti + 1])
 						ti++;
-					/*
-					 * if ( (contAxis[ti-1] - contAxis[ti]) / contAxis[ti] >= 1)
-					 * te=ti; else te = ti-1;
-					 */
-
 				}
 				ti++;
 			}
@@ -134,59 +163,8 @@ public class GammaFitterSVD extends fitter {
 
 	}
 
-	public void calcT1(int increase) {
-		t0 = -1;
-		double max = StatUtils.max(contAxis);
-		int tMax = MathUtils.whereIs(contAxis, max);
-		boolean locatedT0 = false;
-		int ti = tMax - 1;
-		try {
-			while (locatedT0 == false && ti > increase) {
-				int inc = 0;
-				while (inc < increase
-						&& contAxis[ti - inc] > contAxis[ti - inc - 1])
-					inc++;
-
-				// TODO falta una condición
-				if ((inc == increase || contAxis[ti] < 0.5 * max)) {
-					locatedT0 = true;
-					while (ti > 0 && contAxis[ti] > contAxis[ti - 1])
-						ti--;
-
-					/*
-					 * if ( (contAxis[ti-1] - contAxis[ti]) / contAxis[ti] >= 1)
-					 * t0=ti; else t0 = ti+1;
-					 */
-
-				}
-				ti--;
-			}
-			t0 = ti + 1;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			t0 = -1;
-		}
-
-	}
-
-	public void calcTe(int MMC) {
-		te = MMC + 1;
-		try {
-			while (contAxis[te] >= 0.1)
-				if (contAxis[te] <= contAxis[te - 1]
-						|| contAxis[te + 1] <= contAxis[te])
-					te++;
-				else
-					te = -1;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			te = -1;
-		}
-	}
-
-	/*
-	 * bla bla bla bla bla bla B=pinv(X)·Y
-	 */
 	public boolean fitting() {
-		
+
 		boolean fitted;
 		// TODO
 		// EXCEPCION CON T0 NO ENCONTRADO
@@ -195,8 +173,9 @@ public class GammaFitterSVD extends fitter {
 			RealVector Y = YVector();
 			RealVector B = leastSquareSVD(X, Y);
 			setParam(B);
-			/*double[] a = {K,alfa,beta};
-			myGammaFun mgf = new myGammaFun(2);*/
+			/*
+			 * double[] a = {K,alfa,beta}; myGammaFun mgf = new myGammaFun(2);
+			 */
 
 			for (int i = 0; i < dim; i++)
 				if (i > t0 && i < dim)
@@ -212,24 +191,20 @@ public class GammaFitterSVD extends fitter {
 		return fitted;
 	}
 
-	/* Parameters are given by the user */
-	public void fitting(boolean parameters) {
-
-	}
+	
 
 	/*
-	 * The t axis must be linearized as...COMPLETAR | y1 | | 1 X11 X12| | | | y2
+	 * The t axis must be linearized as... | y1 | | 1 X11 X12| | | | y2
 	 * | | 1 X21 X22| | b0 | | . | | . . . | | b1 | | . | = | . . . | | b2 | | .
 	 * | = | . . . | | | | yi | | 1 Xi1 Xi2| | |
 	 */
-	// TODO "t" TIENE QUE SER MAYOR QUE "t0" !!OjO!!
-	public RealMatrix XMatrix() {
+	// t0 must be bigger than 0
+	private RealMatrix XMatrix() {
 		if (te - t0 <= 0)
 			System.out.println();
 		double[][] coeff = new double[te - t0][3];
 
 		for (int i = 0; i < te - t0; i++) {
-			// obligo ti > 0
 
 			double var = tAxis[t0 + i + 1] - t0;
 			coeff[i][0] = 1;
@@ -240,7 +215,7 @@ public class GammaFitterSVD extends fitter {
 	}
 
 	/* The cont axis must be linearized as ln(cont) */
-	public RealVector YVector() {
+	private RealVector YVector() {
 		double y[] = new double[te - t0];
 		for (int i = 0; i < te - t0; i++)
 			if (contAxis[t0 + i + 1] > 0)
@@ -250,9 +225,14 @@ public class GammaFitterSVD extends fitter {
 
 	}
 
-	/*
+	
+	/**
 	 * Least squares resolution by SVD (optimum) using
 	 * org.apache.commons.math3.linear
+	 * 
+	 * @param coefficients
+	 * @param constants
+	 * @return {@link fitter#contAxis} fitted
 	 */
 	public static RealVector leastSquareSVD(RealMatrix coefficients,
 			RealVector constants) {
@@ -272,6 +252,9 @@ public class GammaFitterSVD extends fitter {
 		beta = -(1 / sol.getEntry(2));
 	}
 
+	/**
+	 * @return the parameters:[ {@link #K}, {@link #alfa}, {@link #beta}, {@link #t0} ]
+	 */
 	/* Return the parameters in a double[K,alfa,beta,t0] */
 	public double[] getParams() {
 		return new double[] { K, alfa, beta, t0 };

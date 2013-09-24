@@ -4,8 +4,21 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 
+/**
+ * Extends {@link fitter} in order to use the curve fitter provided by {@link CurveFitter}
+ *  for getting the values fitted to a Gamma function
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class GammaFitterACM extends fitter {
 	
+	/**
+	 * Creates the {@link fitter} with the required parameters 
+	 * @param cont
+	 * @param t0
+	 * @param te
+	 */
 	public GammaFitterACM(double[] cont, int t0, int te) {
 		dim = cont.length;
 		tAxis = new double[dim];
@@ -17,14 +30,18 @@ public class GammaFitterACM extends fitter {
 		this.t0 = t0;
 		this.te = te;
 	}
+	/**
+	 * 
+	 */
 	public GammaFitterACM() {
 		
 	}
 
-	@Override
+
 	public boolean fitting() {
-		// TODO Auto-generated method stub
+		
 		if(t0 > 0 && te > 0 ) {
+			/* Needs to implement linearGamma*/
 		CurveFitter<linearGamma> fitt = new CurveFitter<linearGamma>(new LevenbergMarquardtOptimizer());
 		intPoin(fitt);
 		double[] best;
@@ -39,7 +56,7 @@ public class GammaFitterACM extends fitter {
 		}
 		
 		myGammaFun mgf = new myGammaFun(t0);
-		//double[] result = new double[fittedCont.length];
+		
 		for (int i=0; i < fittedCont.length; i++)
 			fittedCont[i] = mgf.value(i, param);
 		
@@ -49,15 +66,14 @@ public class GammaFitterACM extends fitter {
 		return false;
 	}
 
-	@Override
+	
 	public double[] getFit() {
-		// TODO Auto-generated method stub
 		return fittedCont;
 	}
 	
+	/* Fills the CurveFitter*/
 	private void intPoin(CurveFitter<linearGamma> fitter) {
-		//int t0 = MathUtils.minL(vals)-1;
-		//int te = MathUtils.minR(vals);
+		
 		for(int i=t0+1; i <= te ; i++) 
 			if(contAxis[i] > 0)
 			fitter.addObservedPoint(i, FastMath.log(contAxis[i]));
@@ -66,6 +82,7 @@ public class GammaFitterACM extends fitter {
 				fitter.addObservedPoint(i,-5*StatUtils.max(contAxis));
 	}
 	
+	/* Get the real gamma parameters from the linear ones */
 	private double[] setParam(double[] sol) {
 		double []result=new double[3];
 		result[0] = Math.exp(sol[0]);

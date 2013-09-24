@@ -8,7 +8,6 @@ import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 
-
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -20,8 +19,13 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 
-
-
+/**
+ * Implements the mouse events and the overlay option
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ *         Gordaliza</a>
+ * 
+ */
 public class EventUtils implements MouseListener, MouseMotionListener,
 		WindowListener {
 	ImageCanvas canvas;
@@ -97,9 +101,7 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 				pw.addWindowListener(this);
 
 			} else
-				// chart.setLimits(StatUtils.min(x), StatUtils.max(y),
-				// StatUtils.min(v.contrastEstim),StatUtils.max(v.contrastEstim)
-				// );
+
 				pw.setTitle("slice:" + ip.getSlice() + "  x:" + offscreenX
 						+ "  y:" + offscreenY);
 			chart.setColor(java.awt.Color.BLUE);
@@ -128,6 +130,12 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 
 	}
 
+	/**
+	 * Displays the points for each {@link VoxelT2} coordinates over an image as
+	 * a {@link Overlay}
+	 * 
+	 * @param notFit The {@link VoxelT2} list 
+	 */
 	public static void showPointsOverlays(List<VoxelT2> notFit) {
 		ImagePlus imp = IJ.getImage();
 
@@ -135,20 +143,19 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 		// getting points
 		for (Voxel v : notFit) {
 			PointRoi pr = new PointRoi(v.x, v.y);
-			
+
 			pr.setPosition(1, v.slice, 1);
 			overlay.add(pr);
-			
+
 		}
-		
+
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);
 		imp.setOverlay(overlay);
-		
-		// imp.setHideOverlay(true);
 
 	}
 
+	//Unimplemented
 	public void mousePressed(MouseEvent e) {
 	}
 
