@@ -19,8 +19,8 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 
 public class JPerfusionTool_ implements PlugInFilter, ActionListener {
-	String path = IJ
-			.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
+	//String path = IJ
+		//	.runMacroFile("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\script2.txt");
 
 	ImagePlus hyStack;
 	List<VoxelT2> nonAllVoxels,notFit;

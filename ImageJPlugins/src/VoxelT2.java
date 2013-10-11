@@ -167,7 +167,7 @@ public class VoxelT2 extends Voxel {
 	/**
 	 * CBF getter
 	 * 
-	 * @return
+	 * @return {@link #CBF}
 	 */
 	public double getCBF() {
 		return CBF;
@@ -181,7 +181,7 @@ public class VoxelT2 extends Voxel {
 	 *            AIF function integrated
 	 */
 	public void setCBV(double aifInt) {
-		CBV = MathUtils.interBad(contrastFitted) / aifInt;
+		CBV = MathUtils.interBad(contrastFitted) / aifInt;	
 	}
 
 	/**

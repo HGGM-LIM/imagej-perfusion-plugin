@@ -94,9 +94,9 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 	 * @param x The x coordinate for the pixel sought 
 	 * @param y The x coordinate for the pixel sought
 	 * @param slice
-	 * @return
+	 * @return pixel intensity
 	 */
-	/* TODO incluir frame para que sirva para cualquier time */
+
 	public double getFirstPixel(int x, int y, int slice) {
 		if (x >= dim[0] || x < 0 || y >= dim[1] || y < 0 || slice > dim[3]
 				|| slice < 1) {
