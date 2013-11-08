@@ -92,7 +92,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		new vecToStack(myHypStk, nonAllVoxels, "Nada");
 
 		/******************* FITTING **************************/
-		// TODO Cast different fittings.
+		
 
 		fitter f = getFitter(mf.comboFitting.getSelectedItem());
 
