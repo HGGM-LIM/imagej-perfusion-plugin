@@ -27,7 +27,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 	MainFrame mf;
 
-	@Override
+	
 	public void run(ImageProcessor arg0) {
 		IJ.showStatus("Start");
 		// hyStack.setType(ImagePlus.GRAY32);
