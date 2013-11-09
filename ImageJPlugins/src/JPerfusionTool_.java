@@ -41,7 +41,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		/*
 		 * long time_start, time_end; time_start = System.currentTimeMillis();
 		 */
-		// TODO problemas con calibrat
+		
 		ImagePlusHyp myHypStk = new ImagePlusHyp(hyStack);
 
 		/******* Masking *****************/
