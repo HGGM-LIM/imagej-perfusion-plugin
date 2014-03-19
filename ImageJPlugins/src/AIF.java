@@ -1,11 +1,13 @@
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
 
@@ -28,7 +30,7 @@ import org.apache.commons.math3.stat.StatUtils;
  * and the fitted version. Also implements the methods for the AIF properties
  * visualitation
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro MacÃ­as
  *         Gordaliza</a>
  * 
  */
@@ -44,7 +46,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	Plot AIFChart;
 	PlotWindow AIFWindow;
-	RoiManager manager, AIFSelect;
+	RoiManager manager;
 	JCheckBox jcb;
 	boolean cB;
 
@@ -148,22 +150,29 @@ public class AIF implements ItemListener, WindowListener {
 	 *            The {@link ImagePlus}
 	 */
 	public void paint(ImagePlus image) {
-		manager = RoiManager.getInstance();
+		if (RoiManager.getInstance() == null)
+			manager = new RoiManager();
+			
+			
+		//manager = RoiManager.getInstance();
+		//manager.addWindowListener(this);
 		for (VoxelT2 v : probAIFs) {
 			PointRoi pr = new PointRoi(v.x, v.y);
 			pr.setPosition(1, v.slice, 1);
 
 			// RoiManager manager = RoiManager.getInstance();
-			if (manager == null)
-				manager = new RoiManager();
+			//if (manager == null)
+				//manager = new RoiManager();
 			IJ.runMacro("setSlice(" + v.slice + ")");
 			image.setRoi(pr);
-			manager.setName("AIF ROIs");
 			manager.addRoi(image.getRoi());
 			manager.runCommand("Associate", "true");
-			manager.setVisible(false);
+			
 		}
-
+		manager.setName("AIF ROIs");
+		
+		manager.setVisible(false);
+		manager.addWindowListener(this);
 	}
 
 	/**
@@ -221,19 +230,22 @@ public class AIF implements ItemListener, WindowListener {
 
 	public void itemStateChanged(ItemEvent e) {
 		jcb = (JCheckBox) e.getSource();
-		if (manager == null && jcb.isSelected()) {
-
+		if (RoiManager.getInstance() == null && jcb.isSelected()) {
 			paint(IJ.getImage());
 			manager.setTitle("AIF Voxels");
-			manager.addWindowListener(this);
+			manager.setVisible(true);
+			//manager.addWindowListener(this);
 
+		} else { 
+			//manager.setVisible(true);
+			voxelsAIFOverlay();
 		}
 
 		if (!jcb.isSelected()) {
 			if (manager != null) {
-
-				manager.close();
-				manager = null;
+				
+				manager.setVisible(false);
+				//manager = null;
 				jcb.setSelected(false);
 			}
 		}
@@ -251,8 +263,8 @@ public class AIF implements ItemListener, WindowListener {
 	public List<VoxelT2> voxelsROI(List<VoxelT2> allV) {
 		List<VoxelT2> res = new ArrayList<VoxelT2>();
 		manager.setName("AIF ROIs");
-		AIFSelect = manager;
-		Roi[] rois = AIFSelect.getRoisAsArray();
+		//AIFSelect = manager;
+		Roi[] rois = manager.getRoisAsArray();
 		for (int i = 0; i < rois.length; i++) {
 			// int z = rois[i].getZPosition();
 			int z2 = manager.getSliceNumber(rois[i].getName());
@@ -347,7 +359,18 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	public void windowClosed(WindowEvent e) {
-		jcb.setSelected(false);
+			System.out.println("Closed");
+			manager.removeAll();
+			manager.close();
+			manager = null;
+		
+	}
+	
+	private void voxelsAIFOverlay () {
+		Overlay overlay = EventUtils.createOverlay(probAIFs);
+		overlay.setFillColor(new Color(33, 33, 33, 0));
+		overlay.setStrokeColor(Color.red);
+		IJ.getImage().setOverlay(overlay);
 	}
 
 	// Unimplemented Methods

@@ -98,7 +98,8 @@ public class MainFrame extends JFrame {
 		panel.setLayout(null);
 		
 		AIFVoxels = new JCheckBox("Show AIF voxels");
-		AIFVoxels.setBounds(6, 42, 117, 23);
+		AIFVoxels.setSelected(true);
+		AIFVoxels.setBounds(6, 42, 209, 23);
 		AIFVoxels.setToolTipText("Show the voxels used for the AIF calculation");
 		panel.add(AIFVoxels);
 		
@@ -115,7 +116,7 @@ public class MainFrame extends JFrame {
 		
 		JLabel lblRelativeThreshold = new JLabel("Rel. Threshold");
 		lblRelativeThreshold.setToolTipText("Realtive value for masking the background");
-		lblRelativeThreshold.setBounds(6, 16, 95, 14);
+		lblRelativeThreshold.setBounds(6, 16, 121, 14);
 		panel_1.add(lblRelativeThreshold);
 		
 		ThrField = new JTextField();
