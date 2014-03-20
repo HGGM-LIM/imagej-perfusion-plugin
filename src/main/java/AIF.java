@@ -44,11 +44,10 @@ public class AIF implements ItemListener, WindowListener {
 	private double[] AIF;
 	private double[] AIFfit;
 
-	Plot AIFChart;
-	PlotWindow AIFWindow;
-	RoiManager manager;
-	JCheckBox jcb;
-	boolean cB;
+	private Plot AIFChart;
+	private PlotWindow AIFWindow;
+	private RoiManager manager;
+	private JCheckBox jcb;
 
 	/**
 	 * Class constructor
@@ -143,7 +142,7 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	/**
-	 * Draw the voxels used for the AIF calculation ( {@link #probAIFs} ) within
+	 * Draw the voxels used for the AIF calculation within
 	 * the {@link ImagePlus} selected
 	 * 
 	 * @param image
@@ -300,7 +299,7 @@ public class AIF implements ItemListener, WindowListener {
 	/**
 	 * Obtains the coordinates from voxels inside a {@link Roi}
 	 * 
-	 * @param roi
+	 * @param roi The {@link Roi} object whose coordinates we wish to obtain.
 	 * @return An array with the points inside the ROI
 	 */
 	public static int[][] getPointsROI(Roi roi) {
