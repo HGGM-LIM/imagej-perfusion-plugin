@@ -22,7 +22,7 @@ import javax.swing.JCheckBox;
 /**
  * Implements the mouse events and the overlay option
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
  *         Gordaliza</a>
  * 
  */
@@ -106,9 +106,9 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 						+ "  y:" + offscreenY);
 			chart.setColor(java.awt.Color.BLUE);
 			chart.addPoints(x, v.contrastFitted, PlotWindow.LINE);
-			chart.addLabel(0.75, 0.2, "— Fitted Contrast");
+			chart.addLabel(0.75, 0.2, "ï¿½ Fitted Contrast");
 			chart.setColor(java.awt.Color.BLACK);
-			chart.addLabel(0.75, 0.1, "— Raw Contrast");
+			chart.addLabel(0.75, 0.1, "ï¿½ Raw Contrast");
 
 			pw.drawPlot(chart);
 		} else if (showMove.isSelected() == false)
@@ -129,6 +129,20 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 			mouseClicked(e);
 
 	}
+	
+	public static Overlay createOverlay (List<VoxelT2> points) {
+		
+		Overlay overlay = new Overlay();
+		// getting points
+		for (Voxel v : points) {
+			PointRoi pr = new PointRoi(v.x, v.y);
+
+			pr.setPosition(1, v.slice, 1);
+			overlay.add(pr);
+
+		}
+		return overlay;
+	}
 
 	/**
 	 * Displays the points for each {@link VoxelT2} coordinates over an image as
@@ -137,17 +151,20 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 	 * @param notFit The {@link VoxelT2} list 
 	 */
 	public static void showPointsOverlays(List<VoxelT2> notFit) {
+		
 		ImagePlus imp = IJ.getImage();
 
-		Overlay overlay = new Overlay();
+		//Overlay overlay = new Overlay();
+		Overlay overlay = createOverlay(notFit);
 		// getting points
+		/**
 		for (Voxel v : notFit) {
 			PointRoi pr = new PointRoi(v.x, v.y);
 
 			pr.setPosition(1, v.slice, 1);
 			overlay.add(pr);
 
-		}
+		}**/
 
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);
