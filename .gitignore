@@ -3,18 +3,6 @@
 *.prefs
 *.jar
 *.zip
-*.xml
 *.classpath
 *.project
-<<<<<<< HEAD
-<<<<<<< HEAD
-Sense_Hyperstack.java
-StackAverage_.java
-exter_.java
-vecToImageSupe.java
-gammOide.java
-=======
->>>>>>> 3db167371428f6f05cf73a5de8e6672eeaee65ad
-=======
->>>>>>> 3db167371428f6f05cf73a5de8e6672eeaee65ad
-
+target

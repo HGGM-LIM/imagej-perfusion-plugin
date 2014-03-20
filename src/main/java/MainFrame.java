@@ -24,7 +24,7 @@ import javax.swing.BoxLayout;
 /**
  * Application Window
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 public class MainFrame extends JFrame {
@@ -32,7 +32,7 @@ public class MainFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -3008152621433346520L;
-	JComboBox<?> comboFitting;
+	JComboBox comboFitting;
 	boolean startPressed;
 	JCheckBox AIFVoxels;
 	JButton startButton;
