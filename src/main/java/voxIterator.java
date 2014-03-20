@@ -1,11 +1,11 @@
 
 /**
  * Allows different thresholds per slice
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 
-//purpose intended is not used at last
+//purpose intended is not used at last. Nice Grammar MothaFuckah
 public class voxIterator extends ImagePlusHypIterator {
 
 	public voxIterator(ImagePlusHyp ip) {
