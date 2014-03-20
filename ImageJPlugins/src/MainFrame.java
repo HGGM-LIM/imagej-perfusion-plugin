@@ -5,6 +5,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import java.awt.Font;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingConstants;
@@ -19,7 +21,17 @@ import java.awt.Toolkit;
 import javax.swing.BoxLayout;
 
 
+/**
+ * Application Window
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class MainFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3008152621433346520L;
 	JComboBox<?> comboFitting;
 	boolean startPressed;
 	JCheckBox AIFVoxels;
@@ -32,8 +44,13 @@ public class MainFrame extends JFrame {
 
 	/**
 	 * Launch the application.
+	 * @param args 
 	 */
 	public static void main(String[] args) {
+		try {
+            // Set cross-platform Java L&F (also called "Metal")
+        UIManager.setLookAndFeel(
+            UIManager.getCrossPlatformLookAndFeelClassName());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -44,6 +61,20 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		
+		} 
+	    catch (UnsupportedLookAndFeelException e) {
+	       // handle exception
+	    }
+	    catch (ClassNotFoundException e) {
+	       // handle exception
+	    }
+	    catch (InstantiationException e) {
+	       // handle exception
+	    }
+	    catch (IllegalAccessException e) {
+	       // handle exception
+	    }
 	}
 
 	/**
@@ -147,7 +178,7 @@ public class MainFrame extends JFrame {
 		tabAIF.add(sFit);
 	}
 	
-	public Object getCombo() {
+	private Object getCombo() {
 		return comboFitting.getSelectedItem();
 	}
 }

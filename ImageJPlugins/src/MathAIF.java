@@ -3,6 +3,12 @@ import java.util.List;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
+/**
+ * Implements the neccesary math to calculte the Arterial Input Function
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class MathAIF {
 
 	/**
@@ -23,6 +29,15 @@ public class MathAIF {
 		return result;
 	}
 
+	/**
+	 * @param f
+	 *            function
+	 * @param MC
+	 *            Maximum
+	 * @param MMC
+	 *            Maximum Concetration Moment
+	 * @return the FWHM
+	 */
 	public static double getFWHM(double[] f, double MC, int MMC) {
 		int t1 = MMC - 1, t2 = MMC + 1;
 		double result;
@@ -50,6 +65,10 @@ public class MathAIF {
 		return result;
 	}
 
+	/**
+	 * @param voxels
+	 * @return possibles AIFs
+	 */
 	// TODO hacerlo general
 	public static List<VoxelT2> getAIFs(List<VoxelT2> voxels) {
 		int dim = voxels.size();
@@ -57,14 +76,10 @@ public class MathAIF {
 		MCs = new double[dim];
 		FWHMs = new double[dim];
 		for (int i = 0; i < voxels.size(); i++) {
-
 			MCs[i] = voxels.get(i).getMC();
 			MMCs[i] = voxels.get(i).getMMC();
 			FWHMs[i] = voxels.get(i).getFWHM();
-
 		}
-		System.out.println(StatUtils.max(MCs) + " "
-				+ MathUtils.whereIs(MCs, StatUtils.max(MCs)));
 
 		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
 				StatUtils.max(MCs) * 0.0);
@@ -82,6 +97,11 @@ public class MathAIF {
 
 	}
 
+	/**
+	 * @param voxels
+	 * @param meaningVoxels
+	 * @return the AIF
+	 */
 	public static double[] getAIF(List<VoxelT2> voxels, boolean meaningVoxels) {
 		if (meaningVoxels == true)
 			return stimAIF(voxels);

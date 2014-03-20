@@ -45,9 +45,9 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 	 * @param showMove
 	 *            indicates if the voxel values are shown with the mouse
 	 *            movement
+	 * @param c Associated plot 
 	 */
-	public EventUtils(ImagePlus ip, List<VoxelT2> voxels, JCheckBox showMove,
-			Plot c) {
+	public EventUtils(ImagePlus ip, List<VoxelT2> voxels, JCheckBox showMove,Plot c) {
 		this.ip = ip;
 		canvas = ip.getCanvas();
 		this.voxels = voxels;
@@ -130,6 +130,12 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 
 	}
 	
+	/**
+	 * Establishes the ROI points
+	 * 
+	 * @param points
+	 * @return
+	 */
 	public static Overlay createOverlay (List<VoxelT2> points) {
 		
 		Overlay overlay = new Overlay();
@@ -151,28 +157,16 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 	 * @param notFit The {@link VoxelT2} list 
 	 */
 	public static void showPointsOverlays(List<VoxelT2> notFit) {
-		
 		ImagePlus imp = IJ.getImage();
-
-		//Overlay overlay = new Overlay();
 		Overlay overlay = createOverlay(notFit);
-		// getting points
-		/**
-		for (Voxel v : notFit) {
-			PointRoi pr = new PointRoi(v.x, v.y);
-
-			pr.setPosition(1, v.slice, 1);
-			overlay.add(pr);
-
-		}**/
-
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);
 		imp.setOverlay(overlay);
-
 	}
 
-	//Unimplemented
+	/**
+	 * Unimplemented methods
+	 */
 	public void mousePressed(MouseEvent e) {
 	}
 

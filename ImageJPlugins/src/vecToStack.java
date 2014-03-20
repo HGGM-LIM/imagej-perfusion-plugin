@@ -4,18 +4,26 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 
+/**
+ * Show an Image from a voxels list
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class vecToStack extends ImagePlus {
 
+	/**
+	 * @param ip
+	 * @param voxels
+	 * @param param Parameter to show
+	 */
 	public vecToStack(ImagePlus ip, List<VoxelT2> voxels,String param) {
 		double parameter = 0;
 		int[] dim = ip.getDimensions();
-		//ImagePlus res = IJ.createImage(ip.getTitle(),"16-bit", dim[0], dim[1],
-			//	dim[3]);
+
 		ImagePlus res = IJ.createImage(ip.getTitle(),"32-bit", dim[0], dim[1],
 				dim[3]);
 		res.setDimensions(1, dim[3], 1);
-		//res.setDisplayRange(0, max);
-		
 
 		if (param == "CBV")
 			res.setTitle("CBV");

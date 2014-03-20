@@ -152,25 +152,19 @@ public class AIF implements ItemListener, WindowListener {
 	public void paint(ImagePlus image) {
 		if (RoiManager.getInstance() == null)
 			manager = new RoiManager();
-			
-			
-		//manager = RoiManager.getInstance();
-		//manager.addWindowListener(this);
+
 		for (VoxelT2 v : probAIFs) {
 			PointRoi pr = new PointRoi(v.x, v.y);
 			pr.setPosition(1, v.slice, 1);
 
-			// RoiManager manager = RoiManager.getInstance();
-			//if (manager == null)
-				//manager = new RoiManager();
 			IJ.runMacro("setSlice(" + v.slice + ")");
 			image.setRoi(pr);
 			manager.addRoi(image.getRoi());
 			manager.runCommand("Associate", "true");
-			
+
 		}
 		manager.setName("AIF ROIs");
-		
+
 		manager.setVisible(false);
 		manager.addWindowListener(this);
 	}
@@ -234,18 +228,15 @@ public class AIF implements ItemListener, WindowListener {
 			paint(IJ.getImage());
 			manager.setTitle("AIF Voxels");
 			manager.setVisible(true);
-			//manager.addWindowListener(this);
 
-		} else { 
-			//manager.setVisible(true);
+		} else
 			voxelsAIFOverlay();
-		}
 
 		if (!jcb.isSelected()) {
 			if (manager != null) {
-				
+
 				manager.setVisible(false);
-				//manager = null;
+				// manager = null;
 				jcb.setSelected(false);
 			}
 		}
@@ -263,7 +254,7 @@ public class AIF implements ItemListener, WindowListener {
 	public List<VoxelT2> voxelsROI(List<VoxelT2> allV) {
 		List<VoxelT2> res = new ArrayList<VoxelT2>();
 		manager.setName("AIF ROIs");
-		//AIFSelect = manager;
+		// AIFSelect = manager;
 		Roi[] rois = manager.getRoisAsArray();
 		for (int i = 0; i < rois.length; i++) {
 			// int z = rois[i].getZPosition();
@@ -359,14 +350,14 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	public void windowClosed(WindowEvent e) {
-			System.out.println("Closed");
-			manager.removeAll();
-			manager.close();
-			manager = null;
-		
+		System.out.println("Closed");
+		manager.removeAll();
+		manager.close();
+		manager = null;
+
 	}
-	
-	private void voxelsAIFOverlay () {
+
+	private void voxelsAIFOverlay() {
 		Overlay overlay = EventUtils.createOverlay(probAIFs);
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);

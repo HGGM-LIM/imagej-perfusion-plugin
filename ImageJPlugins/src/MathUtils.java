@@ -1,5 +1,4 @@
 
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -8,6 +7,11 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
+/**
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ *         Gordaliza</a>
+ * 
+ */
 public class MathUtils {
 
 	/**
@@ -43,7 +47,14 @@ public class MathUtils {
 
 	}
 
-	/* Simple method for subtracting a constant from a double[] */
+	/**
+	 * Substrac a escalar to a vector
+	 * 
+	 * @param vec
+	 * @param subs
+	 * @param abs
+	 * @return
+	 */
 	public static double[] vecSubs(double[] vec, double subs, boolean abs) {
 		double[] result = new double[vec.length];
 		for (int i = 0; i < vec.length; i++) {
@@ -54,24 +65,29 @@ public class MathUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Sum a constant to a vector
-	 * @param vec 
-	 * @param sum the constant to be summed 
+	 * 
+	 * @param vec
+	 * @param sum
+	 *            the constant to be summed
 	 * @return vec + sum
 	 */
-	public static double[] vecSum(double[] vec,double sum) {
+	public static double[] vecSum(double[] vec, double sum) {
 		double[] result = new double[vec.length];
 		for (int i = 0; i < vec.length; i++)
 			result[i] = vec[i] + sum;
-		
+
 		return result;
-					
+
 	}
 
-	/* Getting the amount of numbers bigger than a threshold */
-
+	/**
+	 * @param vals
+	 * @param trheshold
+	 * @return numbers in vals bigger than trheshold
+	 */
 	public static int amountBigger(double[] vals, double trheshold) {
 		int result = 0;
 		for (int i = 0; i < vals.length; i++)
@@ -82,6 +98,10 @@ public class MathUtils {
 
 	}
 
+	/**
+	 * @param ind
+	 * @return ones within in
+	 */
 	public static int amountOnes(boolean[] ind) {
 		int result = 0;
 		for (int i = 0; i < ind.length; i++)
@@ -133,10 +153,9 @@ public class MathUtils {
 		return result;
 	}
 
-	
-
 	/**
 	 * Find a value v into the values
+	 * 
 	 * @param vals
 	 * @param v
 	 * @return the position of v inside vals
@@ -182,14 +201,26 @@ public class MathUtils {
 		return result;
 	}
 
+	/**
+	 * @param con
+	 *            contrastRaw
+	 * @param aif
+	 * @return CBV
+	 */
 	public static double getCBV(double[] con, double aif) {
 		return (interBad(con)) / aif;
 
 	}
 
-	/*
+	
+	/**
+	 * 
 	 * Least squares resolution by SVD (optimum) using
 	 * org.apache.commons.math3.linear
+	 * 
+	 * @param coefficients
+	 * @param constants
+	 * @return
 	 */
 	public static RealVector leastSquareSVD(RealMatrix coefficients,
 			RealVector constants) {
@@ -198,6 +229,11 @@ public class MathUtils {
 
 	}
 
+	/**
+	 * @param coefficients
+	 * @param constants
+	 * @return solution to he system X*B = Y
+	 */
 	public static double[] SVDsol(RealMatrix coefficients, RealVector constants) {
 		return new SingularValueDecomposition(coefficients).getSolver()
 				.solve(constants).toArray();
@@ -235,11 +271,11 @@ public class MathUtils {
 	}
 
 	/**
-	 * Performs the deconvolution operation given by c(t) =
-	 * sum[f(tao)*g(t-tao)] where the sum extends tao from -infinity to infinity
-	 * (theory) Hence in a matricial way | c0 | | f0 0 0 ··· 0 | | c1 | | f1 f0
-	 * 0 ··· 0 | | c2 | = | f2 f1 f0 ··· 0 | | ··· | | ··· ··· ··· ··· 0 | | ct
-	 * | | ft ft-1 ft-2··· f0 |
+	 * Performs the deconvolution operation given by c(t) = sum[f(tao)*g(t-tao)]
+	 * where the sum extends tao from -infinity to infinity (theory) Hence in a
+	 * matricial way | c0 | | f0 0 0 ··· 0 | | c1 | | f1 f0 0 ··· 0 | | c2 | = |
+	 * f2 f1 f0 ··· 0 | | ··· | | ··· ··· ··· ··· 0 | | ct | | ft ft-1 ft-2···
+	 * f0 |
 	 * 
 	 * @param f
 	 * @param g
@@ -277,7 +313,7 @@ public class MathUtils {
 		return FastMath.rint(n * p) / p;
 	}
 
-	public static int calcT(double[] contAxis, int increase) {
+	/*public static int calcT(double[] contAxis, int increase) {
 		int te = -1;
 		int tMax = MathUtils.whereIs(contAxis, StatUtils.max(contAxis));
 		boolean locatedT0 = false;
@@ -304,30 +340,35 @@ public class MathUtils {
 		}
 		return te;
 
-	}
+	}*/
 
 	/**
 	 * 
-	 * @param aif low-triangular shifted matrix
+	 * @param aif
+	 *            low-triangular shifted matrix
 	 * @return the aif's pseudo-inverse by SVD
 	 */
 	public static double[][] pInvMon(double[][] aif) {
-		RealMatrix trunUTrans,trunS,trunV;
-		SingularValueDecomposition svd = new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
-				false));
+		RealMatrix trunUTrans, trunS, trunV;
+		SingularValueDecomposition svd = new SingularValueDecomposition(
+				new Array2DRowRealMatrix(aif, false));
 		int rank = svd.getRank();
-		/*double [] sinV = svd.getSingularValues();
-				double [] cag = new double[rank];
-		for (int i = 0; i < rank; i++)
-			cag[i] = sinV[i];*/
-		trunS = svd.getS().getSubMatrix(0, rank -1, 0, rank -1);
-		trunV = svd.getV().getSubMatrix(0,aif[0].length - 1, 0, rank -1);
-		trunUTrans = svd.getUT().getSubMatrix(0,  rank -1, 0, aif[0].length - 1);
-		//IJ.showMessage(" " +interBad(cag) / interBad(svd.getSingularValues()));
+		/*
+		 * double [] sinV = svd.getSingularValues(); double [] cag = new
+		 * double[rank]; for (int i = 0; i < rank; i++) cag[i] = sinV[i];
+		 */
+		trunS = svd.getS().getSubMatrix(0, rank - 1, 0, rank - 1);
+		trunV = svd.getV().getSubMatrix(0, aif[0].length - 1, 0, rank - 1);
+		trunUTrans = svd.getUT()
+				.getSubMatrix(0, rank - 1, 0, aif[0].length - 1);
+		// IJ.showMessage(" " +interBad(cag) /
+		// interBad(svd.getSingularValues()));
 		return trunV.multiply(trunS).multiply(trunUTrans).getData();
-		
-		/*return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
-				false)).getSolver().getInverse().getData();*/
+
+		/*
+		 * return new SingularValueDecomposition(new Array2DRowRealMatrix(aif,
+		 * false)).getSolver().getInverse().getData();
+		 */
 	}
 
 	/**
@@ -354,9 +395,7 @@ public class MathUtils {
 		boolean located = false;
 		try {
 			while (located == false) {
-				while (vals[ti] >= vals[ti - 1] && vals[ti] > 0
-						/*&& (vals[ti] - vals[ti - 1] <= FastMath
-						.abs(vals[ti - 1]) * 4)*/)
+				while (vals[ti] >= vals[ti - 1] && vals[ti] > 0)
 					ti--;
 				tMaxRel = maxLFrom(ti, vals);
 				if (((max - vals[ti]) >= 0.5 * max || (vals[ti] - vals[ti - 1] >= vals[ti - 1] * 4))
@@ -368,10 +407,7 @@ public class MathUtils {
 					ti = -1;
 
 			}
-			/*
-			 * if( vals[ti +1] - vals[ti] >= 0.5*vals[ti +1] && ti + 1 != tMax)
-			 * ti++;
-			 */
+		
 
 			while (vals[ti + 1] <= 0)
 				ti++;
@@ -424,9 +460,6 @@ public class MathUtils {
 					ti = -1;
 			}
 
-			/*
-			 * if(vals[ti-1] - vals[ti] >= 0.5 *vals[ti-1] ) ti--;
-			 */
 			while (vals[ti] < 0)
 				ti--;
 
@@ -442,15 +475,15 @@ public class MathUtils {
 	/**
 	 * 
 	 * @param vals
-	 * @return  the located min after the spike
+	 * @return the located min after the spike
 	 */
 	public static int minR(double[] vals) {
 		return minR(StatUtils.max(vals),
 				MathUtils.whereIs(vals, StatUtils.max(vals)), vals);
 	}
 
-	public static int maxRFrom(int tFrom, double[] vals) {
-		/* return -1 means always ascending */
+	private static int maxRFrom(int tFrom, double[] vals) {
+		// return -1 means always ascending 
 		int tResult = tFrom;
 		try {
 			while (vals[tResult + 1] >= vals[tResult])
@@ -462,7 +495,7 @@ public class MathUtils {
 		}
 	}
 
-	public static int maxLFrom(int tFrom, double[] vals) {
+	private static int maxLFrom(int tFrom, double[] vals) {
 		/* return -1 means always ascending */
 		int tResult = tFrom;
 		try {
@@ -474,73 +507,71 @@ public class MathUtils {
 			return -1;
 		}
 	}
-	
-	public static int chinL (double[] vals,int ti) {
-		int tMax = MathUtils.whereIs(vals,StatUtils.max(vals));
-		while(ti < vals.length-3) {
-		int i = 0;
-		while (i < 3 && vals[ti+i] < vals [ti+i+1])
-			i++;
-		if (i == 3 && ti + 3 < tMax) {
-			if ( (vals[ti +1] / vals[ti]) - 1  >= 1 )
-				return ti;
-			else 
-				return ti + 1;
-		} else 
-			 ti++;
+
+	/*public static int chinL(double[] vals, int ti) {
+		int tMax = MathUtils.whereIs(vals, StatUtils.max(vals));
+		while (ti < vals.length - 3) {
+			int i = 0;
+			while (i < 3 && vals[ti + i] < vals[ti + i + 1])
+				i++;
+			if (i == 3 && ti + 3 < tMax) {
+				if ((vals[ti + 1] / vals[ti]) - 1 >= 1)
+					return ti;
+				else
+					return ti + 1;
+			} else
+				ti++;
 		}
 		return -1;
-	}
-	
-	public static int chinR(double[] vals,int ti) {
-		int tMax = MathUtils.whereIs(vals,StatUtils.max(vals));
-		while(ti < vals.length -3) {
-		int i = 0;
-		while (i < 3 && vals[ti+i] > vals[ti+i+1])
-			i++;
-		if( i==3 && ti > tMax) {
-			if ( (vals[ti - 1] / vals[ti]) - 1  >= 1)
-				return ti;
-			else
-				return ti - 1;
-		} else
-			ti++;
+	}*/
+
+	/*public static int chinR(double[] vals, int ti) {
+		int tMax = MathUtils.whereIs(vals, StatUtils.max(vals));
+		while (ti < vals.length - 3) {
+			int i = 0;
+			while (i < 3 && vals[ti + i] > vals[ti + i + 1])
+				i++;
+			if (i == 3 && ti > tMax) {
+				if ((vals[ti - 1] / vals[ti]) - 1 >= 1)
+					return ti;
+				else
+					return ti - 1;
+			} else
+				ti++;
 		}
 		return -1;
-	}
-	
+	}*/
+
 	/**
 	 * 
 	 * @param values
 	 * @param k
-	 * @return  inf limit and sup limit for identifying outliers
+	 * @return inf limit and sup limit for identifying outliers
 	 */
-	public static double[] limitOutl(double[] values,double k) {
-		double[]result = new double[2];
+	public static double[] limitOutl(double[] values, double k) {
+		double[] result = new double[2];
 		double q1 = StatUtils.percentile(values, 5);
 		double q3 = StatUtils.percentile(values, 95);
-		result[0] = q1 - k*(q3-q1);
-		result[1] = q3 + k*(q3-q1);
-		
+		result[0] = q1 - k * (q3 - q1);
+		result[1] = q3 + k * (q3 - q1);
+
 		return result;
-		
+
 	}
-	
-	public static double[] limitOutlM(double[] values, double k) {
-		double[] result = new double[2];
-		result[0] = StatUtils.mean(values) - k*FastMath.sqrt(StatUtils.variance(values));
-		result[1] = StatUtils.mean(values) + k*FastMath.sqrt(StatUtils.variance(values));
-		
-		return result;
-	}
-	
+
+
+	/**
+	 * 
+	 * Simple integral
+	 * @param values
+	 * @return 
+	 */
 	public static double interBad(double[] values) {
 		double result = 0;
 		for (int i = 0; i < values.length; i++)
 			result += FastMath.abs(values[i]);
-		
+
 		return result;
 	}
-		
 
 }
