@@ -1,51 +1,71 @@
+/**
+ * Simple data transfer object to ease the analysis of all the TACs in a given
+ * image. Objects returned by the {@link ImagePlusHypIterator} class are of this
+ * type.
+ * 
+ * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * 
+ */
+public class Voxel {
 
-
-public class Voxel implements Comparable<Voxel>{
-
-	/* X coordinate */
+	/**
+	 * X-coordinate for the voxel.
+	 */
 	public final int x;
 
-	/* Y coordinate */
+	/**
+	 * Y-coordinate for the voxel.
+	 */
 	public final int y;
 
-	/* Z coordinate,actually the slice */
+	/**
+	 * Slice (1-based) for the voxel.
+	 */
 	public final int slice;
 
-	/* Time function contrast */
+	/**
+	 * Time-activity curve.
+	 */
 
 	public final double[] tac;
-	
-	
 
-	/* Constructor */
-	public Voxel(int _x, int _y, int _slice, double[] _tac) {
-		x = _x;
-		y = _y;
-		slice = _slice;
-		tac = _tac;
+	/**
+	 * Main constructor for this data transfer object
+	 * 
+	 * @param x
+	 *            X-coordinate.
+	 * @param y
+	 *            Y-coordinate.
+	 * @param slice
+	 *            Slice number.
+	 * @param tac
+	 *            Time-activity curve.
+	 */
+	public Voxel(int x, int y, int slice, double[] tac) {
+		this.x = x;
+		this.y = y;
+		this.slice = slice;
+		this.tac = tac;
 
 	}
 
+	public void setContrastRaw(int nFrames, int firstFrame) {
+	}
 
-	public void setContrastRaw(int nFrames, int firstFrame) {}
+	public void setContrastEstim(double aif[][]) {
+	}
 
-	
-	public void setContrastEstim (double aif[][]) {}
-	
-	public void setContrastFitted(fitter f){}
+	public void setContrastFitted(fitter f) {
+	}
 
-	public void setParams() {}
+	public void setParams() {
+	}
 
-
-	@Override
-	public int compareTo(Voxel o) {
+	/*public int compareTo(Voxel o) {
 		Voxel v = o;
-		if(slice == v.slice && x == v.x && y == v.y  )
+		if (slice == v.slice && x == v.x && y == v.y)
 			return 1;
 		return 0;
-	}
-	
-	
-	
+	}*/
 
 }

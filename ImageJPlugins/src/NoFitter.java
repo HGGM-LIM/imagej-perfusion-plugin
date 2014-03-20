@@ -1,23 +1,33 @@
 
+/**
+ * Implements the case without fitting the data
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class NoFitter extends fitter {
-	//double[] contAxis;
 
+
+	/**
+	 * @param contAxis
+	 * @param t0
+	 * @param te
+	 */
 	public NoFitter(double[] contAxis,int t0,int te) {
-		// TODO Auto-generated constructor stub
+	
 		this.contAxis = contAxis;
 		fittedCont = contAxis;
 	}
+	/**
+	 * 
+	 */
 	public NoFitter(){}
 
-	@Override
 	public boolean fitting() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
-	@Override
 	public double[] getFit() {
-		// TODO Auto-generated method stub
 		return contAxis;
 	}
 

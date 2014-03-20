@@ -2,20 +2,23 @@ import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.util.FastMath;
 
 
+/**
+ * Implements the gamma function K(t -t0)^alfa*exp((t-t0)/beta)
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class myGammaFun implements ParametricUnivariateFunction {
 	private int t0;
-	/* params[0] = K;
-	 * params[1] = alfa;
-	 * params[2] = beta;
-	 */
-	
 
+	/**
+	 * @param t0
+	 */
 	public myGammaFun(int t0) {
-		// TODO Auto-generated constructor stub
 		this.t0 = t0;
 	}
 
-	@Override
+	
 	public double[] gradient(double arg0, double... arg1) {
 		// TODO Auto-generated method stub
 		double t = arg0 ;
@@ -31,8 +34,7 @@ public class myGammaFun implements ParametricUnivariateFunction {
 		
 		return gradient;
 	}
-	//6.885284315579477E-13, 28.760307027334886, 0.25605599110315486]
-	@Override
+	
 	public double value(double arg0, double... arg1) {
 		double k =  arg1[0];
 		double alfa = arg1[1];

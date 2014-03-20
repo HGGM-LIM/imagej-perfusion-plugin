@@ -3,7 +3,13 @@ import java.util.List;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
-// CAso de nuevos estudios
+
+/**
+ * Voxel for T2* studies
+ * 
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
 public class VoxelT2 extends Voxel {
 
 	/* Contrast direct from the image applying -ln(S(t)/S0) */
@@ -181,7 +187,7 @@ public class VoxelT2 extends Voxel {
 	 *            AIF function integrated
 	 */
 	public void setCBV(double aifInt) {
-		CBV = MathUtils.interBad(contrastFitted) / aifInt;	
+		CBV = MathUtils.interBad(contrastFitted) / aifInt;
 	}
 
 	/**
@@ -211,8 +217,6 @@ public class VoxelT2 extends Voxel {
 	public double[] getContrastFitted() {
 		return contrastFitted;
 	}
-	
-	
 
 	/**
 	 * contrastFitted setter
@@ -234,10 +238,16 @@ public class VoxelT2 extends Voxel {
 		contrastEstim = MathUtils.multi(paif, contrastFitted);
 	}
 
+	/**
+	 * @return The contrast estimated 
+	 */
 	public double[] getContrastEstim() {
 		return contrastEstim;
 	}
 
+	/**
+	 * @return MTT
+	 */
 	public double getMTT() {
 		return MTT;
 	}
@@ -246,7 +256,7 @@ public class VoxelT2 extends Voxel {
 	 * Establish the MTT
 	 */
 	public void setMTT() {
-		
+
 		double max = StatUtils.max(contrastEstim);
 		MTT = MathUtils.interBad(contrastEstim) / max;
 	}
@@ -276,16 +286,27 @@ public class VoxelT2 extends Voxel {
 	}
 
 	// TODO
-	public boolean isMinimal(double max) {
+	/*public boolean isMinimal(double max) {
 
 		return MC > max * 0.125;
-	}
+	}*/
 
+	/**
+	 * @param sep
+	 * @return
+	 */
 	public boolean notFalling(int sep) {
 		return MathUtils.whereIs(contrastRaw, StatUtils.max(contrastRaw)) > contrastRaw.length
 				- sep - 1;
 	}
 
+	/**
+	 * @param voxels
+	 * @param x
+	 * @param y
+	 * @param slice
+	 * @return
+	 */
 	public static VoxelT2 VoxelSearch(List<VoxelT2> voxels, int x, int y,
 			int slice) {
 
@@ -298,15 +319,11 @@ public class VoxelT2 extends Voxel {
 
 	}
 
-	public VoxelT2 VoxelSearch(List<VoxelT2> voxels) {
-
-		for (VoxelT2 v2 : voxels) {
-			if (v2.compareTo(this) == 1)
-				return v2;
-
-		}
-		return null;
-
-	}
+	/*
+	 * public VoxelT2 VoxelSearch(List<VoxelT2> voxels) {
+	 * 
+	 * for (VoxelT2 v2 : voxels) { if (v2.compareTo(this) == 1) return v2; }
+	 * return null; }
+	 */
 
 }

@@ -1,9 +1,15 @@
 
+/**
+ * Allows different thresholds per slice
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ *
+ */
+
+//purpose intended is not used at last
 public class voxIterator extends ImagePlusHypIterator {
 
 	public voxIterator(ImagePlusHyp ip) {
 		super(ip);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Voxel next(int threshold) { 

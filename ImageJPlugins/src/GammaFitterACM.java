@@ -37,6 +37,11 @@ public class GammaFitterACM extends fitter {
 		
 	}
 
+	/**
+	 * Implements the fit model
+	 * 
+	 * @return true if is possible to fit {@link #contAxis}
+	 */
 
 	public boolean fitting() {
 		
