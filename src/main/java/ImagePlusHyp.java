@@ -1,5 +1,5 @@
-
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -37,14 +37,11 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 		this.setProcessor(ip.getProcessor());
 		this.setImage(ip);
 		this.dim = ip.getDimensions();
-		
-		
 
 		// Set the current calibration
 		Calibration cal = ip.getCalibration();
 		this.setCalibration(cal);
 		this.cal = cal;
-		
 
 	}
 
@@ -91,8 +88,10 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 	/**
 	 * Sometimes the whole TAC is not nedded
 	 * 
-	 * @param x The x coordinate for the pixel sought 
-	 * @param y The x coordinate for the pixel sought
+	 * @param x
+	 *            The x coordinate for the pixel sought
+	 * @param y
+	 *            The x coordinate for the pixel sought
 	 * @param slice
 	 * @return pixel intensity
 	 */
@@ -108,8 +107,9 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 
 	/**
 	 * 
-	 * @param slice The slice where we want to know the threshold for the whole
-	 *        time sequence
+	 * @param slice
+	 *            The slice where we want to know the threshold for the whole
+	 *            time sequence
 	 * @return The threshold sought
 	 */
 	public int getThreshold(int slice) {
@@ -129,10 +129,22 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel> {
 			return true;
 		return false;
 	}
+	
 
-	@Override
+
 	public Iterator<Voxel> iterator() {
-		return new voxIterator(this);
+		return new ImagePlusHypIterator(this);
+		// return new voxIterator(this);
+	}
+
+	public Iterator<Voxel> getIterator(String... s) {
+		//TODO cambiar a tipo de voxel el sstring
+		if (s[0] == "simple")
+			return iterator();
+		else if (s[0].compareToIgnoreCase("T2") == 0)
+			return new voxIterator(this,s);
+
+		return null;
 	}
 
 }

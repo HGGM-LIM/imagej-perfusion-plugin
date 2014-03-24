@@ -3,12 +3,12 @@ import java.util.List;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
-
 /**
  * Voxel for T2* studies
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
- *
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
+ *         Gordaliza</a>
+ * 
  */
 public class VoxelT2 extends Voxel {
 
@@ -64,6 +64,10 @@ public class VoxelT2 extends Voxel {
 		te = MathUtils.minR(contrastRaw);
 	}
 
+	public VoxelT2(Voxel voxel) {
+		this(voxel.x, voxel.y, voxel.slice, voxel.tac);
+	}
+
 	/**
 	 * 
 	 * @param nFrames
@@ -99,7 +103,6 @@ public class VoxelT2 extends Voxel {
 	 * contrast
 	 */
 	public void setParams() {
-		// TODO si contrastRaw no esta inicializada
 		double[] parameters = MathAIF.parameters(contrastFitted);
 		setMC(parameters[0]);
 		setMMC(parameters[1]);
@@ -239,7 +242,7 @@ public class VoxelT2 extends Voxel {
 	}
 
 	/**
-	 * @return The contrast estimated 
+	 * @return The contrast estimated
 	 */
 	public double[] getContrastEstim() {
 		return contrastEstim;
@@ -286,10 +289,11 @@ public class VoxelT2 extends Voxel {
 	}
 
 	// TODO
-	/*public boolean isMinimal(double max) {
-
-		return MC > max * 0.125;
-	}*/
+	/*
+	 * public boolean isMinimal(double max) {
+	 * 
+	 * return MC > max * 0.125; }
+	 */
 
 	/**
 	 * @param sep
@@ -317,6 +321,23 @@ public class VoxelT2 extends Voxel {
 		}
 		return null;
 
+	}
+
+	public boolean isFittable() {
+		return (t0 > 0 && te > 0);
+	}
+
+	public boolean AIFValidation(double max) {
+		
+		if (Double.compare(getFWHM(), Double.NaN) != 0
+				&& Double.compare(getFWHM(), 0) > 0 && !isNoisy(0.125)
+				&& getMC() > max / 8) {
+			AIFValid = true;
+			return true;
+		}
+		return false;
+			
+		
 	}
 
 	/*

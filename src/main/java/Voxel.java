@@ -1,12 +1,14 @@
+import java.util.List;
+
 /**
  * Simple data transfer object to ease the analysis of all the TACs in a given
  * image. Objects returned by the {@link ImagePlusHypIterator} class are of this
  * type.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">Josï¿½ Marï¿½a Mateos</a>.
  * 
  */
-public class Voxel {
+public class Voxel  {
 
 	/**
 	 * X-coordinate for the voxel.
@@ -49,23 +51,19 @@ public class Voxel {
 
 	}
 
-	public void setContrastRaw(int nFrames, int firstFrame) {
+	public static void paint(List <Voxel> paintThem) {
+		
 	}
+	public void setContrastRaw(int nFrames, int firstFrame) {}
 
-	public void setContrastEstim(double aif[][]) {
+	public void setContrastEstim(double aif[][]) {}
+
+	public void setContrastFitted(fitter f) {}
+
+	public void setParams() {}
+	
+	public boolean isFittable() {
+		return false;
 	}
-
-	public void setContrastFitted(fitter f) {
-	}
-
-	public void setParams() {
-	}
-
-	/*public int compareTo(Voxel o) {
-		Voxel v = o;
-		if (slice == v.slice && x == v.x && y == v.y)
-			return 1;
-		return 0;
-	}*/
 
 }

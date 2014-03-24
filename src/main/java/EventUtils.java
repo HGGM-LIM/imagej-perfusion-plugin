@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 
+
 /**
  * Implements the mouse events and the overlay option
  * 
@@ -55,6 +56,10 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 		pw = null;
 		this.showMove = showMove;
 
+	}
+	
+	public static void EventsOn(ImagePlus ip, List<VoxelT2> voxels, JCheckBox showMove,Plot c) {
+		 new EventUtils(ip,voxels,showMove,c).turnOn();
 	}
 
 	/**
@@ -149,6 +154,8 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 		}
 		return overlay;
 	}
+	
+	
 
 	/**
 	 * Displays the points for each {@link VoxelT2} coordinates over an image as

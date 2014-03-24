@@ -1,3 +1,4 @@
+
 import java.util.List;
 import ij.IJ;
 import ij.ImagePlus;
@@ -7,17 +8,17 @@ import ij.measure.Calibration;
 /**
  * Show an Image from a voxels list
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
-public class vecToStack extends ImagePlus {
+public class vecToStack {
 
 	/**
 	 * @param ip
 	 * @param voxels
 	 * @param param Parameter to show
 	 */
-	public vecToStack(ImagePlus ip, List<VoxelT2> voxels,String param) {
+	public static void paintParametricMap(ImagePlus ip, List<VoxelT2> voxels,String param) {
 		double parameter = 0;
 		int[] dim = ip.getDimensions();
 
@@ -46,7 +47,7 @@ public class vecToStack extends ImagePlus {
 			 else if(param == "Nada")
 				 parameter = v.tac[0];
 
-			target.setVoxel(v.x, v.y, v.slice - 1,  parameter/**512/max*/);
+			target.setVoxel(v.x, v.y, v.slice - 1,  parameter);
 		}
 		 Calibration cal = ip.getCalibration();
 	        double size_x = cal.pixelWidth;

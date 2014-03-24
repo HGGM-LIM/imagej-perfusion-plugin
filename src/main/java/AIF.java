@@ -1,3 +1,4 @@
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Overlay;
@@ -44,10 +45,11 @@ public class AIF implements ItemListener, WindowListener {
 	private double[] AIF;
 	private double[] AIFfit;
 
-	private Plot AIFChart;
-	private PlotWindow AIFWindow;
-	private RoiManager manager;
-	private JCheckBox jcb;
+	Plot AIFChart;
+	PlotWindow AIFWindow;
+	RoiManager manager;
+	JCheckBox jcb;
+	boolean cB;
 
 	/**
 	 * Class constructor
@@ -57,24 +59,18 @@ public class AIF implements ItemListener, WindowListener {
 	 * @param max
 	 *            The maximum value in the set of curves
 	 */
-	public AIF(List<VoxelT2> AllVoxels, double max) {
+	public AIF(List<VoxelT2> AllVoxels) {
 		AIFValid = new ArrayList<VoxelT2>();
-		for (VoxelT2 v : AllVoxels) {
-			/* Make it maximum dependent */
-			if (Double.compare(v.getFWHM(), Double.NaN) != 0
-					&& Double.compare(v.getFWHM(), 0) > 0 && !v.isNoisy(0.125)
-					&& v.getMC() > max / 8) {
-				AIFValid.add(v);
-
-			}
-
-		}
+		for (VoxelT2 v : AllVoxels) 
+			// Make it maximum dependent 
+			if (v.AIFValid) 
+				AIFValid.add(v);	
+		
 		probAIFs = MathAIF.getAIFs(AIFValid);
 		if (!probAIFs.isEmpty())
 			AIF = MathAIF.getAIF(probAIFs, true);
 		else
 			AIF = new double[AllVoxels.get(0).contrastRaw.length];
-
 	}
 
 	/**
@@ -115,6 +111,10 @@ public class AIF implements ItemListener, WindowListener {
 	public List<VoxelT2> getProbAIFs() {
 		return probAIFs;
 	}
+	
+/*	public List<Voxel> getProbAIFsV() {
+		return (List<Voxel>)(List<?>)probAIFs;
+	}*/
 
 	/**
 	 * Permits to fit the AIF by using a fitter extended from {@link fitter}
@@ -142,7 +142,7 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	/**
-	 * Draw the voxels used for the AIF calculation within
+	 * Draw the voxels used for the AIF calculation ( {@link #probAIFs} ) within
 	 * the {@link ImagePlus} selected
 	 * 
 	 * @param image
@@ -299,7 +299,7 @@ public class AIF implements ItemListener, WindowListener {
 	/**
 	 * Obtains the coordinates from voxels inside a {@link Roi}
 	 * 
-	 * @param roi The {@link Roi} object whose coordinates we wish to obtain.
+	 * @param roi
 	 * @return An array with the points inside the ROI
 	 */
 	public static int[][] getPointsROI(Roi roi) {
@@ -362,6 +362,7 @@ public class AIF implements ItemListener, WindowListener {
 		overlay.setStrokeColor(Color.red);
 		IJ.getImage().setOverlay(overlay);
 	}
+	
 
 	// Unimplemented Methods
 	public void windowOpened(WindowEvent e) {

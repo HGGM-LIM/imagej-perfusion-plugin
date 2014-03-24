@@ -55,17 +55,6 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         
     }
     
-   
-  /* public Voxel next(int threshold) {
-    	if (ip.getFirstPixel(x, y, slice) > threshold)
-    		return next();
-    	else {
-    		_updatePointers();
-    		return null;
-    	}
-    } */
-    
-   
 
     @Override
     public void remove() throws UnsupportedOperationException {
