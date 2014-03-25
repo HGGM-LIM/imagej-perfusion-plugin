@@ -3,6 +3,8 @@
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,12 +42,26 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	List<VoxelT2> nonAllVoxels=new ArrayList<VoxelT2>(), notFit = new ArrayList<VoxelT2>();
 	MainFrame mf;
 	String voxelModel = "T2";
+	EventUtils eu;
 
 	public void run(ImageProcessor arg0) {
 		IJ.showStatus("Start");
 		mf = new MainFrame();
 		mf.setVisible(true);
 		mf.startButton.addActionListener(this);
+		mf.addWindowListener(new WindowListener() {
+
+			public void windowClosed(WindowEvent arg0) {
+				eu.turnOff();
+			}
+			public void windowActivated(WindowEvent arg0) {}
+			public void windowClosing(WindowEvent arg0) {}
+			public void windowDeactivated(WindowEvent arg0) {}
+			public void windowDeiconified(WindowEvent arg0) {}
+			public void windowIconified(WindowEvent arg0) {}
+			public void windowOpened(WindowEvent arg0) {}
+			
+		});
 	}
 
 	private void doIt() {
@@ -56,7 +72,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 		double max = 0;
 	
-		IJ.showStatus("Addig Voxels...");
+		IJ.showStatus("Adding Voxels...");
 		Iterator<Voxel> voxIterator = getVoxelModel(); 
 
 		boolean fBool = mf.comboFitting.getSelectedItem().toString() == "NoFitter";
@@ -71,12 +87,12 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		}
 		
 
-		EventUtils.showPointsOverlays(notFit);
+		
 		IJ.showStatus("All meaninful voxels added");
 
 		// Show Image after mask
 		vecToStack.paintParametricMap(myHypStk, nonAllVoxels, "Nada");
-		
+		EventUtils.showPointsOverlays(notFit);
 
 		//****************** FITTING ***********************
 
@@ -88,8 +104,8 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 				v.AIFValidation(max);
 		}
 		// /////////////////////Enables the Dynamic Pixel Inspector/////////////////////////////////////////
-		EventUtils.EventsOn(hyStack, nonAllVoxels, mf.showCont, new Plot("AIF", "Time", "Contrast"));
-		
+		eu = new EventUtils(hyStack, nonAllVoxels, mf.showCont, new Plot("AIF", "Time", "Contrast"));
+		eu.turnOn();
 		////////////////AIF Calculation/////////////////////////
 
 		AIF aifO = new AIF(nonAllVoxels);
@@ -154,6 +170,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		// Show CBF Image
 		vecToStack.paintParametricMap(myHypStk, nonAllVoxels, "CBF");
 		RoiManager.getInstance().setVisible(true);
+		
 
 	}
 

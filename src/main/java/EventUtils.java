@@ -75,8 +75,8 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 	 * Unable the Events
 	 */
 	public void turnOff() {
-		canvas.addMouseListener(null);
-		canvas.addMouseMotionListener(null);
+		canvas.removeMouseListener(this);
+		canvas.removeMouseMotionListener(this);	
 	}
 
 	/**
@@ -142,15 +142,12 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 	 * @return
 	 */
 	public static Overlay createOverlay (List<VoxelT2> points) {
-		
 		Overlay overlay = new Overlay();
 		// getting points
 		for (Voxel v : points) {
 			PointRoi pr = new PointRoi(v.x, v.y);
-
 			pr.setPosition(1, v.slice, 1);
 			overlay.add(pr);
-
 		}
 		return overlay;
 	}
@@ -169,6 +166,7 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);
 		imp.setOverlay(overlay);
+		imp.setOverlay(null);
 	}
 
 	/**
