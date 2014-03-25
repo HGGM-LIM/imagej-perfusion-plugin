@@ -1,8 +1,9 @@
+package perfusion;
 
 /**
  * Implements the case without fitting the data
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 public class NoFitter extends fitter {

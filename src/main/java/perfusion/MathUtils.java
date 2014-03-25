@@ -1,3 +1,4 @@
+package perfusion;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -8,7 +9,7 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
  *         Gordaliza</a>
  * 
  */
@@ -273,8 +274,8 @@ public class MathUtils {
 	/**
 	 * Performs the deconvolution operation given by c(t) = sum[f(tao)*g(t-tao)]
 	 * where the sum extends tao from -infinity to infinity (theory) Hence in a
-	 * matricial way | c0 | | f0 0 0 ··· 0 | | c1 | | f1 f0 0 ··· 0 | | c2 | = |
-	 * f2 f1 f0 ··· 0 | | ··· | | ··· ··· ··· ··· 0 | | ct | | ft ft-1 ft-2···
+	 * matricial way | c0 | | f0 0 0 ï¿½ï¿½ï¿½ 0 | | c1 | | f1 f0 0 ï¿½ï¿½ï¿½ 0 | | c2 | = |
+	 * f2 f1 f0 ï¿½ï¿½ï¿½ 0 | | ï¿½ï¿½ï¿½ | | ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 0 | | ct | | ft ft-1 ft-2ï¿½ï¿½ï¿½
 	 * f0 |
 	 * 
 	 * @param f
@@ -289,9 +290,9 @@ public class MathUtils {
 	/**
 	 * Performs the deconvolution opertation given by c(t) =
 	 * sum[f(tao)*g(t-tao)] where the sum extends tao from -infinity to infinity
-	 * (theory) Hence in a matricial way | c0 | | f0 0 0 ··· 0 | | c1 | | f1 f0
-	 * 0 ··· 0 | | c2 | = | f2 f1 f0 ··· 0 | | ··· | | ··· ··· ··· ··· 0 | | ct
-	 * | | ft ft-1 ft-2··· f0 |
+	 * (theory) Hence in a matricial way | c0 | | f0 0 0 ï¿½ï¿½ï¿½ 0 | | c1 | | f1 f0
+	 * 0 ï¿½ï¿½ï¿½ 0 | | c2 | = | f2 f1 f0 ï¿½ï¿½ï¿½ 0 | | ï¿½ï¿½ï¿½ | | ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 0 | | ct
+	 * | | ft ft-1 ft-2ï¿½ï¿½ï¿½ f0 |
 	 * 
 	 * @param f
 	 * @param g
@@ -324,7 +325,7 @@ public class MathUtils {
 					&& contAxis[ti - inc] < contAxis[ti - inc - 1])
 				inc++;
 
-			// TODO falta una condición
+			// TODO falta una condiciï¿½n
 			if (inc == increase && contAxis[ti] > 0) {
 				locatedT0 = true;
 				while (ti < contAxis.length - 1

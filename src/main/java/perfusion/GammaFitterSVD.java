@@ -1,3 +1,4 @@
+package perfusion;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -10,7 +11,7 @@ import org.apache.commons.math3.util.FastMath;
  * Extends {@link fitter} in order to use the SVD approximation to solve least
  * squares model for fitting
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
  *         Gordaliza</a>
  * 
  */
@@ -93,7 +94,7 @@ public class GammaFitterSVD extends fitter {
 	 *            Minimum distance from the maximum in {@link fitter#contAxis}
 	 */
 	public void calcT0(int increase) {
-		t0 = -1; // EXCEPCIÓN CUANDO ESTO PASE
+		t0 = -1; // EXCEPCIï¿½N CUANDO ESTO PASE
 
 		try {
 			int tMax = MathUtils.whereIs(contAxis, StatUtils.max(contAxis));
@@ -106,7 +107,7 @@ public class GammaFitterSVD extends fitter {
 						&& contAxis[ti + inc] < contAxis[ti + inc + 1]) {
 					inc++;
 				}
-				// TODO falta una condición
+				// TODO falta una condiciï¿½n
 				if (inc == increase && ti + increase < tMax && contAxis[ti] > 0) {
 					locatedT0 = true;
 					if ((contAxis[ti - 1] - contAxis[ti]) / contAxis[ti] >= 1)
@@ -144,7 +145,7 @@ public class GammaFitterSVD extends fitter {
 						&& contAxis[ti - inc] < contAxis[ti - inc - 1])
 					inc++;
 
-				// TODO falta una condición
+				// TODO falta una condiciï¿½n
 				if ((inc == increase || contAxis[ti] < 0.5 * max)) {
 					locatedT0 = true;
 					while (ti < contAxis.length - 1

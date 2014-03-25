@@ -1,3 +1,4 @@
+package perfusion;
 /**
  * Provides a base class to implement fitting models. Direct Known subclasses:
  * {@link GammaFitterACM}, {@link GammaFitterSVD}, {@link NoFitter}
@@ -5,7 +6,7 @@
  * A fitter needs the values to be fitted, {@link #contAxis} and to set which
  * ones might be used for fitting. From {@link #t0} to {@link #te}
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
  *         Gordaliza</a>
  * 
  */

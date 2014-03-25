@@ -1,8 +1,9 @@
+package perfusion;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as
  *         Gordaliza</a>
  * 
  *         Linearize a gamma function

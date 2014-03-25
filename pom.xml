@@ -13,10 +13,10 @@
 	</parent>
 
 	<groupId>sc.fiji</groupId>
-	<artifactId>LIMPerfusion</artifactId>
+	<artifactId>LIMPerfusion_</artifactId>
 	<version>1.0.0</version>
 
-	<name>plugins/LIMPerfusion.jar</name>
+	<name>plugins/LIMPerfusion_.jar</name>
 	<description>A Maven project implementing an ImageJ 1.x plugin</description>
 
 	<dependencies>

@@ -1,3 +1,4 @@
+package perfusion;
 import org.apache.commons.math3.fitting.CurveFitter;
 import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
 import org.apache.commons.math3.stat.StatUtils;
@@ -8,7 +9,7 @@ import org.apache.commons.math3.util.FastMath;
  * Extends {@link fitter} in order to use the curve fitter provided by {@link CurveFitter}
  *  for getting the values fitted to a Gamma function
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 public class GammaFitterACM extends fitter {

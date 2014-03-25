@@ -1,3 +1,4 @@
+package perfusion;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.stat.StatUtils;
@@ -6,7 +7,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Implements the neccesary math to calculte the Arterial Input Function
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 public class MathAIF {

@@ -1,3 +1,4 @@
+package perfusion;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.util.FastMath;
 
@@ -5,7 +6,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Implements the gamma function K(t -t0)^alfa*exp((t-t0)/beta)
  * 
- * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías Gordaliza</a>
+ * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macï¿½as Gordaliza</a>
  *
  */
 public class myGammaFun implements ParametricUnivariateFunction {
