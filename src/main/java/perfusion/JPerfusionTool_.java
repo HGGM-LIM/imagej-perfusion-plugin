@@ -174,7 +174,6 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		
 
 	}
-
 	
 	public int setup(String arg0, ImagePlus arg1) {
 	    if (arg1 == null) {
