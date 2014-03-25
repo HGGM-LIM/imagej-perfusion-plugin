@@ -176,6 +176,11 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 	
 	public int setup(String arg0, ImagePlus arg1) {
+	    if (arg1 == null) {
+	        IJ.error("Need an open image");
+	        return DONE;
+	    }
+	    
 		if (!arg1.isHyperStack()) {
 			if (arg1.getNChannels() == 1 && arg1.getNSlices() == 1
 					&& arg1.getNFrames() > 1) {
