@@ -80,8 +80,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Mikel\\Documents\\ProyectoDoc\\Images\\BIIG.png"));
+	public MainFrame() {		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 400, 247);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
