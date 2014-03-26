@@ -143,7 +143,7 @@ public class MainFrame extends JFrame {
 		panel_1.setLayout(null);
 		
 		JLabel lblRelativeThreshold = new JLabel("Rel. Threshold");
-		lblRelativeThreshold.setToolTipText("Realtive value for masking the background");
+		lblRelativeThreshold.setToolTipText("Relative value for masking the background");
 		lblRelativeThreshold.setBounds(6, 16, 121, 14);
 		panel_1.add(lblRelativeThreshold);
 		
