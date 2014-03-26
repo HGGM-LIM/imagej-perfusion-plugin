@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import java.awt.Font;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
@@ -33,15 +32,15 @@ public class MainFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -3008152621433346520L;
-	JComboBox comboFitting;
-	boolean startPressed;
-	JCheckBox AIFVoxels;
-	JButton startButton;
-	JTextField ThrField;
-	JCheckBox showCont;
-	 JCheckBox sFit;
-	 private JPanel panel;
-	 private JTextField textField;
+	protected JComboBox comboFitting;
+	private boolean startPressed;
+	protected JCheckBox AIFVoxels;
+	protected JButton startButton;
+	protected JTextField ThrField;
+	protected JCheckBox showCont;
+	private JCheckBox sFit;
+	private JPanel panel;
+	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -96,15 +95,13 @@ public class MainFrame extends JFrame {
 		mainPanel.setLayout(null);
 		
 		comboFitting = new JComboBox();
-		comboFitting.setMaximumRowCount(10);
-		comboFitting.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 11));
-		comboFitting.setModel(new DefaultComboBoxModel(new String[] {"GammaFitterACM", "GammaFitterSVD", "NoFitter"}));
+		comboFitting.setMaximumRowCount(10);		
+		comboFitting.setModel(new DefaultComboBoxModel(new String[] {"NoFitter", "GammaFitterACM", "GammaFitterSVD"}));
 		comboFitting.setBounds(184, 11, 160, 20);
 		mainPanel.add(comboFitting);
 		
 		JLabel lblSelectFitting = new JLabel("Select Fitting :");
-		lblSelectFitting.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSelectFitting.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 11));
+		lblSelectFitting.setHorizontalAlignment(SwingConstants.CENTER);		
 		lblSelectFitting.setBounds(21, 14, 111, 14);
 		mainPanel.add(lblSelectFitting);
 		
