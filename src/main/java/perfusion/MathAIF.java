@@ -34,9 +34,9 @@ public class MathAIF {
 	 * @param f
 	 *            function
 	 * @param MC
-	 *            Maximum
+	 *            Maximum concentration
 	 * @param MMC
-	 *            Maximum Concetration Moment
+	 *            Maximum concentration moment
 	 * @return the FWHM
 	 */
 	public static double getFWHM(double[] f, double MC, int MMC) {
@@ -117,7 +117,7 @@ public class MathAIF {
 	 * @param MMCs
 	 *            all the Maximum Concentration Moments
 	 * @param FWHMs
-	 *            all the Full Width Half Medium
+	 *            all the Full Width Half Maximum
 	 * @return a boolean where the curves accomplish the conditions for being
 	 *         AIF, thus FWHM(AIF) = mean(FWHM) - 1.5 standard deviation (FWHM)
 	 */
