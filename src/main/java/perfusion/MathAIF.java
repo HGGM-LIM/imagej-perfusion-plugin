@@ -5,7 +5,7 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * Implements the neccesary math to calculte the Arterial Input Function
+ * Implements the necessary math to calculate the Arterial Input Function
  * 
  * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Mac�as Gordaliza</a>
  *
@@ -67,7 +67,7 @@ public class MathAIF {
 	}
 
 	/**
-	 * @param voxels
+	 * @param voxels 
 	 * @return possibles AIFs
 	 */
 	
@@ -82,8 +82,7 @@ public class MathAIF {
 			FWHMs[i] = voxels.get(i).getFWHM();
 		}
 
-		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs,
-				StatUtils.max(MCs) * 0.0);
+		int[] biggerThanHMaxMC = MathUtils.findBiggerThan(MCs, 0.0);
 
 		boolean[] probAIF = isAIF(biggerThanHMaxMC, MMCs, FWHMs, MCs);
 		List<VoxelT2> posAIFs = new ArrayList<VoxelT2>();
