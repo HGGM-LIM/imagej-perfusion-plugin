@@ -174,8 +174,5 @@ public class MainFrame extends JFrame {
 		sFit.setBounds(6, 83, 97, 23);
 		tabAIF.add(sFit);
 	}
-	
-	private Object getCombo() {
-		return comboFitting.getSelectedItem();
-	}
+
 }
