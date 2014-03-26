@@ -71,6 +71,18 @@ public class AIF implements ItemListener, WindowListener {
 			AIF = MathAIF.getAIF(probAIFs, true);
 		else
 			AIF = new double[AllVoxels.get(0).contrastRaw.length];
+		
+		manager.addWindowListener(new WindowListener() {
+			public void windowActivated(WindowEvent arg0) {}
+			public void windowClosed(WindowEvent arg0) {
+				jcb.setSelected(false);	
+			}
+			public void windowClosing(WindowEvent arg0) {}
+			public void windowDeactivated(WindowEvent arg0) {}
+			public void windowDeiconified(WindowEvent arg0) {}
+			public void windowIconified(WindowEvent arg0) {}
+			public void windowOpened(WindowEvent arg0) {}
+		}); 
 	}
 
 	/**
@@ -233,17 +245,7 @@ public class AIF implements ItemListener, WindowListener {
 				manager.runCommand("Delete");
 				manager.setVisible(false);
 			}
-		manager.addWindowListener(new WindowListener() {
-			public void windowActivated(WindowEvent arg0) {}
-			public void windowClosed(WindowEvent arg0) {
-				jcb.setSelected(false);	
-			}
-			public void windowClosing(WindowEvent arg0) {}
-			public void windowDeactivated(WindowEvent arg0) {}
-			public void windowDeiconified(WindowEvent arg0) {}
-			public void windowIconified(WindowEvent arg0) {}
-			public void windowOpened(WindowEvent arg0) {}
-		}); 
+	
 		
 	}
 
