@@ -167,7 +167,7 @@ public class EventUtils implements MouseListener, MouseMotionListener,
 		overlay.setFillColor(new Color(33, 33, 33, 0));
 		overlay.setStrokeColor(Color.red);
 		imp.setOverlay(overlay);
-		imp.setOverlay(null);
+		
 	}
 
 	/**

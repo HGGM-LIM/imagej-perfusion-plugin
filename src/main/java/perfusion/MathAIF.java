@@ -70,7 +70,7 @@ public class MathAIF {
 	 * @param voxels
 	 * @return possibles AIFs
 	 */
-	// TODO hacerlo general
+	
 	public static List<VoxelT2> getAIFs(List<VoxelT2> voxels) {
 		int dim = voxels.size();
 		double[] MCs, FWHMs, MMCs = new double[dim];

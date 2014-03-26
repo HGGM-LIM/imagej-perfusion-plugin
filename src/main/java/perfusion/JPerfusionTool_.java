@@ -88,12 +88,13 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		}
 		
 
-		
+		EventUtils.showPointsOverlays(notFit);
 		IJ.showStatus("All meaninful voxels added");
 
 		// Show Image after mask
 		vecToStack.paintParametricMap(myHypStk, nonAllVoxels, "Nada");
-		EventUtils.showPointsOverlays(notFit);
+		
+		
 
 		//****************** FITTING ***********************
 
@@ -112,7 +113,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		AIF aifO = new AIF(nonAllVoxels);
 
 		mf.AIFVoxels.addItemListener(aifO);
-
+		
 		double[] AIF = null ;
 		aifO.setAIFfit(f);
 		// //////////////////////
