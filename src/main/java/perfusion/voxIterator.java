@@ -1,4 +1,5 @@
 package perfusion;
+
 /**
  * Allows different thresholds per slice
  * 
@@ -10,6 +11,7 @@ package perfusion;
 // purpose intended is not used at last. Nice Grammar MothaFuckah
 public class voxIterator extends ImagePlusHypIterator {
 	int thr;
+	double forceFit;
 
 	public voxIterator(ImagePlusHyp ip) {
 		super(ip);
@@ -19,8 +21,12 @@ public class voxIterator extends ImagePlusHypIterator {
 	public voxIterator(ImagePlusHyp ip, String... s) {
 		this(ip);
 		int a = ip.getNSlices() / 2;
-		this.thr = (int) (ip.getThreshold(a == 0 ? 1 : a) / Double
-				.parseDouble(s[1]));
+		thr = (int) (ip.getThreshold(a == 0 ? 1 : a) / Double.parseDouble(s[1]));
+		forceFit = Double.parseDouble(s[2]);
+		if (forceFit > 1)
+			forceFit = 1;
+		else if (forceFit < 0)
+			forceFit = 0;
 	}
 
 	public Voxel next() {
@@ -42,25 +48,19 @@ public class voxIterator extends ImagePlusHypIterator {
 
 	public Voxel nextT2(int threshold) {
 		if (ip.getFirstPixel(x, y, slice) > threshold) {
-			
-			
-			VoxelT2 v2= new VoxelT2(super.next());
-			if (/*mf.sFit.isSelected() == true &&*/ v2 != null && v2.te == -1
-			&& v2.notFalling((int) (ip.getNFrames() * 0.25 + 1)))
+			// forceFit = 0.25 default
+			VoxelT2 v2 = new VoxelT2(super.next());
+			if (/* mf.sFit.isSelected() == true && */v2 != null && v2.te == -1
+					&& v2.notFalling((int) (ip.getNFrames() * forceFit + 1)))
 				v2.te = v2.contrastRaw.length - 1;
-			//return new VoxelT2(super.next());
+
 			return v2;
 		} else {
 			_updatePointers();
 			return null;
 		}
 	}
-	
-	
 
-	/*
-	 * public VoxelT2 next(double a) { //Voxel v = next(); return new
-	 * VoxelT2(super.next()); }
-	 */
+	
 
 }

@@ -285,6 +285,7 @@ public class VoxelT2 extends Voxel {
 
 		double minLoc = StatUtils.min(contrastRaw, (int) MMC,
 				(int) (contrastRaw.length - MMC));
+		
 
 		return FastMath.abs(minLoc) > StatUtils.max(contrastRaw) * k;
 	}

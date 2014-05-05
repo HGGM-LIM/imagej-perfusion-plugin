@@ -38,9 +38,9 @@ public class MainFrame extends JFrame {
 	protected JButton startButton;
 	protected JTextField ThrField;
 	protected JCheckBox showCont;
-	private JCheckBox sFit;
+	protected JCheckBox sFit;
 	private JPanel panel;
-	private JTextField textField;
+	protected JTextField forceFake;
 
 	/**
 	 * Launch the application.
@@ -154,13 +154,13 @@ public class MainFrame extends JFrame {
 		ThrField.setText("1");
 		ThrField.setColumns(10);
 		
-		textField = new JTextField();
-		textField.setToolTipText("0 to 1");
-		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		textField.setText("0.1");
-		textField.setBounds(133, 41, 34, 14);
-		panel_1.add(textField);
-		textField.setColumns(10);
+		forceFake = new JTextField();
+		forceFake.setToolTipText("0 to 1");
+		forceFake.setHorizontalAlignment(SwingConstants.CENTER);
+		forceFake.setText("0.25");
+		forceFake.setBounds(133, 41, 34, 14);
+		panel_1.add(forceFake);
+		forceFake.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Force-Fitting");
 		lblNewLabel.setToolTipText("% of frames when the normal fit is not possible");

@@ -14,6 +14,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.util.FastMath;
 
 import ij.IJ;
@@ -46,6 +47,8 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	EventUtils eu;
 
 	public void run(ImageProcessor arg0) {
+	
+		
 		IJ.showStatus("Start");
 		mf = new MainFrame();
 		mf.setVisible(true);
@@ -153,7 +156,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		//********** Contrast without AIF influence ***********
 
 		// ///pseudoinverse AIF///////////
-		//double[][] matrixAIF = MathUtils.lowTriangular(AIF);
+	
 		double[][] matrixPAIF = MathUtils.pInvMon( MathUtils.lowTriangular(AIF));
 		for (VoxelT2 v : nonAllVoxels) {
 			v.setContrastEstim(matrixPAIF);
@@ -177,6 +180,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	}
 	
 	public int setup(String arg0, ImagePlus arg1) {
+	
 	    if (arg1 == null) {
 	        IJ.error("Need an open image");
 	        return DONE;
@@ -209,7 +213,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	}
 	
 	private Iterator<Voxel> getVoxelModel() {
-		return myHypStk.getIterator(voxelModel,mf.ThrField.getText());
+		return myHypStk.getIterator(voxelModel,mf.ThrField.getText(),mf.forceFake.getText());
 	}
 
 
