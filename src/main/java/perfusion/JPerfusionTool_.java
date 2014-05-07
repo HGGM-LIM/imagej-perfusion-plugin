@@ -53,9 +53,13 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	MainFrame mf;
 	String voxelModel = "T2";
 	EventUtils eu;
-	ImageIcon continueIcon =  new ImageIcon("src/main/resources/continue-icon.png");
-	ImageIcon biigIcon =  new ImageIcon("src/main/resources/BIIG.png");
-	ImageIcon questionIcon =  new ImageIcon("src/main/resources/Question_mark.png");
+	//Image a = getClass().getr
+	//ImageIcon continueIcon =  new ImageIcon("src/main/resources/continue-icon.png");
+	
+	ImageIcon continueIcon =  new ImageIcon(
+	        JPerfusionTool_.class.getResource("/continue-icon.png"));
+	ImageIcon biigIcon =  new ImageIcon(JPerfusionTool_.class.getResource("/BIIG.png"));
+	ImageIcon questionIcon =  new ImageIcon(JPerfusionTool_.class.getResource("/Question_mark.png"));
 	
 			
 
@@ -68,6 +72,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				mf = new MainFrame();
+				mf.setIconImage(JPerfusionTool_.this.biigIcon.getImage());
 				mf.setVisible(true);	
 		
 		//mf.setVisible(true);
@@ -109,6 +114,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 		boolean fBool = mf.comboFitting.getSelectedItem().toString() == "NoFitter";
 		while (voxIterator.hasNext()) {
+			
 			VoxelT2 v = (VoxelT2) voxIterator.next();
 			if (v != null && (fBool || v.isFittable())) {
 				nonAllVoxels.add(v);
