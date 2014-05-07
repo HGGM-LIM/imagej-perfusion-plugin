@@ -1,6 +1,8 @@
 package perfusion;
 import java.awt.EventQueue;
 
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -13,12 +15,16 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.Toolkit;
 import javax.swing.BoxLayout;
+import javax.swing.JRadioButton;
 
 
 /**
@@ -80,11 +86,13 @@ public class MainFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame() {		
+	public MainFrame() {	
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 400, 247);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		setTitle("LIM Perfusion Tool");
+		this.setIconImage(new ImageIcon("src/main/resources/BIIG.png").getImage());
+		
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane);
@@ -173,6 +181,51 @@ public class MainFrame extends JFrame {
 		sFit.setVisible(false);
 		sFit.setBounds(6, 83, 97, 23);
 		tabAIF.add(sFit);
-	}
+		
+		JPanel AIFPanel = new JPanel();
+		tabbedPane.addTab("AIF", null, AIFPanel, null);
+		AIFPanel.setLayout(null);
+		
+		final JRadioButton manualCalc = new JRadioButton("Semi-Manual Calc");
+		manualCalc.setBounds(19, 46, 121, 24);
+		AIFPanel.add(manualCalc);
+		
+		JRadioButton fromFile = new JRadioButton("From a file");
+		fromFile.setBounds(19, 89, 121, 24);
+		AIFPanel.add(fromFile);
+		final ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(manualCalc);
+		buttonGroup.add(fromFile);
+		
+		JButton continueBtn = new JButton("Continue..");
+		continueBtn.setBounds(219, 70, 98, 26);
+		AIFPanel.add(continueBtn);
+		
+		
+		continueBtn.addMouseListener(new MouseListener() {
 
+			public void mouseClicked(MouseEvent arg0) {
+				if (buttonGroup.getSelection() != null ) {
+					System.out.println("tocado");
+					if(manualCalc.isSelected()) {
+						System.out.println("Manual Calc");
+						//manualCalc(voxels);
+						
+					} else {
+						System.out.println("Intro from file");
+					}
+				} else {
+					System.out.println("No Tocado");
+				}
+				
+			}
+			public void mouseEntered(MouseEvent arg0) {}
+			public void mouseExited(MouseEvent arg0) {}
+			public void mousePressed(MouseEvent arg0) {}
+			public void mouseReleased(MouseEvent arg0) {}
+			
+		});
+		
+		
+	}
 }

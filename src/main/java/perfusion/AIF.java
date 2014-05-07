@@ -10,22 +10,39 @@ import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.commons.math3.stat.StatUtils;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
 
 /**
  * AIF class contains the voxels used for Arterial Input Function calculation
@@ -44,12 +61,13 @@ public class AIF implements ItemListener, WindowListener {
 	private List<VoxelT2> AIFValid;
 	private double[] AIF;
 	private double[] AIFfit;
-
+	protected JFrame jf;
 	Plot AIFChart;
 	PlotWindow AIFWindow;
 	RoiManager manager = new RoiManager();
 	JCheckBox jcb;
 	boolean cB;
+	//static Object lock = new Object();
 
 	/**
 	 * Class constructor
@@ -355,13 +373,119 @@ public class AIF implements ItemListener, WindowListener {
 		}
 		return poin;
 	}
+	
+	/**
+	 * Set the AIF with the specified values in the file. CSV format.
+	 * 
+	 * @param f source file. One line with the values
+	 * @return true if everything goes well
+	 */
+	public boolean setAIFFromTxtFile(File f) {
+		String csvLimit = ",";
+		if (f.isFile()) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(f));
+				String[] values = br.readLine().split(csvLimit);
+				double[] probAIF = new double[values.length];
+				for (int i = 0; i < values.length; i++) 
+					probAIF[i] = Double.parseDouble(values[i]);
+				
+				setAIF(probAIF);
+				return true; 
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+				return false;
+			} catch (NumberFormatException nfe) {
+				nfe.printStackTrace();
+				return false;
+			} /*finally {
+				JOptionPane.showMessageDialog(new JFrame(),
+					    "The introduced AIF is incorrect",
+					    "AIF Error",
+					    JOptionPane.ERROR_MESSAGE);
+			}*/
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public boolean setAIFFromTxtFile(String s) {
+		return setAIFFromTxtFile(new File(s));
+	}
 
 	public void windowClosed(WindowEvent e) {
 		System.out.println("Closed");
 		manager.removeAll();
 		manager.close();
 		manager = null;
+	}
+	
+	public void AIFMethodSelector(final List <VoxelT2> voxels) {
+	
+				JPanel panel = new JPanel();
+				panel.setLayout(null);
+				JLabel label = new JLabel("Select your way");
+				label.setBounds(71, 11, 77, 23);
+				panel.add(label);
+				 jf = new JFrame();
+				jf.getContentPane().add(panel);
+				
+				JRadioButton AIFFromFile = new JRadioButton("AIF from a file");
+				AIFFromFile.setBounds(6, 67, 124, 23);
+				panel.add(AIFFromFile);
+				
+				final JRadioButton manualCalc = new JRadioButton("Manual Calculation");
+				manualCalc.setBounds(6, 41, 124, 23);
+				panel.add(manualCalc);
+				final ButtonGroup buttonGroup = new ButtonGroup();
+				buttonGroup.add(manualCalc);
+				buttonGroup.add(AIFFromFile);
+				jf.setLocationRelativeTo(null);
+				//jf.requestFocus();
+			
+				
+				JButton continueBtn = new JButton("Continue...");
+				continueBtn.addMouseListener(new MouseListener() {
 
+					public void mouseClicked(MouseEvent arg0) {
+						if (buttonGroup.getSelection() != null ) {
+							System.out.println("tocado");
+							if(manualCalc.isSelected()) {
+								System.out.println("Manual Calc");
+								manualCalc(voxels);
+								jf.dispose();
+							} else {
+								System.out.println("Intro from file");
+							}
+						} else {
+							System.out.println("No Tocado");
+						}
+						
+					}
+					public void mouseEntered(MouseEvent arg0) {}
+					public void mouseExited(MouseEvent arg0) {}
+					public void mousePressed(MouseEvent arg0) {}
+					public void mouseReleased(MouseEvent arg0) {}
+					
+				});
+
+				continueBtn.setBounds(113, 90, 89, 23);
+				panel.add(continueBtn);
+				jf.setSize(400, 200);
+				//jf.pack();
+				jf.setVisible(true);
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
 	}
 
 	private void voxelsAIFOverlay() {
@@ -389,5 +513,15 @@ public class AIF implements ItemListener, WindowListener {
 
 	public void windowDeactivated(WindowEvent e) {
 	}
-
+	
+	
+	
+	
+	public static void main (String args[]) {
+		AIF a = new AIF(new double[100]);
+		//a.AIFMethodSelector();
+		boolean b = a.setAIFFromTxtFile(("C:\\Users\\pmacias\\Documents\\pruebas\\prueba.db"));
+		
+		
+	}
 }

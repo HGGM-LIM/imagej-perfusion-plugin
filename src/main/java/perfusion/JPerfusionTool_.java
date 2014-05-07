@@ -10,11 +10,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.util.FastMath;
 
 import ij.IJ;
@@ -45,14 +53,31 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	MainFrame mf;
 	String voxelModel = "T2";
 	EventUtils eu;
+	ImageIcon continueIcon =  new ImageIcon("src/main/resources/continue-icon.png");
+	ImageIcon biigIcon =  new ImageIcon("src/main/resources/BIIG.png");
+	ImageIcon questionIcon =  new ImageIcon("src/main/resources/Question_mark.png");
+	
+			
+
 
 	public void run(ImageProcessor arg0) {
 	
 		
 		IJ.showStatus("Start");
-		mf = new MainFrame();
-		mf.setVisible(true);
-		mf.startButton.addActionListener(this);
+		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				mf = new MainFrame();
+				mf.setVisible(true);	
+		
+		//mf.setVisible(true);
+		mf.startButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				doIt();	
+			}	
+		});
 		mf.addWindowListener(new WindowListener() {
 
 			public void windowClosed(WindowEvent arg0) {
@@ -65,6 +90,9 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			public void windowIconified(WindowEvent arg0) {}
 			public void windowOpened(WindowEvent arg0) {}
 			
+		});
+		
+			}
 		});
 	}
 
@@ -122,25 +150,58 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		// //////////////////////
 		if (aifO.getAIFfit() != null)
 			AIF = aifO.getAIFfit();
+	
 		JOptionPane jop = new JOptionPane("               Is the AIF valid?",
 				JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
-
+		jop.setIcon(this.questionIcon);
+		
 		JDialog dialog = jop.createDialog("AIF Validation");
 		dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+		dialog.setIconImage(biigIcon.getImage());
 
 		aifO.paint(hyStack);
+		
+		//final AIF aux = aifO;
+		
 		int b = 1;
 		do {
 			aifO.paintChart();
+			//aux.paintChart();
 			dialog.setVisible(true);
 			b = (Integer) jop.getValue();
 			if (b == 1) {
-				aifO.manualCalc(nonAllVoxels);
+				
+				Object[] options = {"Semi-Manual Calculation",
+	                    "AIF from a text file",
+	                    "Cancel"};
+				int n = JOptionPane.showOptionDialog(jop,
+					    "Choose your way: ",
+					    "AIF Calculation",
+					    JOptionPane.YES_NO_CANCEL_OPTION,
+					    JOptionPane.QUESTION_MESSAGE,
+					    this.continueIcon,
+					    options,
+					    options[2]);
+				if (n == 0 ) {
+					aifO.manualCalc(nonAllVoxels);
+					
+				} else if(n == 1) {
+					JFileChooser jfc = new JFileChooser();
+					jfc.showOpenDialog(new JFrame());
+					aifO.setAIFFromTxtFile(jfc.getSelectedFile());
+					
+				} 
+				
+						//aux.AIFMethodSelector(nonAllVoxels);
+				//aifO.manualCalc(nonAllVoxels);
 				aifO.setAIFfit(f);
+				//aux.setAIFfit(f);
+				//AIF = aux.getAIF();
 				AIF = aifO.getAIFfit();
 			}
 
 		} while (b == 1);
+		
 
 		/////////////////////////AIF Calculation End/////////////////////
 
@@ -178,6 +239,60 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		
 
 	}
+	
+	
+	
+private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF aif*/) {
+	JFrame frame = new JFrame();
+	JPanel panel = new JPanel();
+	JButton button = new JButton("b");
+	panel.add(button);
+	frame.add(panel);
+	frame.pack();
+	frame.setVisible(true);
+	SwingWorker sw = new SwingWorker<Void,Integer>() {
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			// TODO Auto-generated method stub
+			for (int i = 0; i  < 1000000; i++){
+				//setProgress(i);
+				//Thread.sleep(100);
+				System.out.println("Task "+i);
+			}
+			
+			return null;
+		}
+		
+		public void done() {
+			System.out.println("Done");
+		
+		}
+		
+	};
+	System.out.println("Execute");
+	sw.execute();
+	/*int b = 1;
+	do {
+		aif.paintChart();
+		//aux.paintChart();
+		dialog.setVisible(true);
+		b = (Integer) jop.getValue();
+		if (b == 1) {
+			
+			
+			
+			aif.manualCalc(nonAllVoxels);
+			System.out.println("Pasando");
+			aif.setAIFfit(f);
+			//aux.setAIFfit(f);
+			//AIF = aux.getAIF();
+			
+		}
+
+	} while (b == 1);*/
+ }
+		
 	
 	public int setup(String arg0, ImagePlus arg1) {
 	
