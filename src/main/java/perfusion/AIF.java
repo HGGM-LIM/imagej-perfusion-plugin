@@ -57,8 +57,8 @@ public class AIF implements ItemListener, WindowListener {
 	/*
 	 * probAIFs are the voxels with a proper contrast to be AIF.
 	 */
-	private List<VoxelT2> probAIFs;
-	private List<VoxelT2> AIFValid;
+	protected List<VoxelT2> probAIFs;
+	protected List<VoxelT2> AIFValid= new ArrayList<VoxelT2>();;
 	private double[] AIF;
 	private double[] AIFfit;
 	protected JFrame jf;
@@ -78,17 +78,14 @@ public class AIF implements ItemListener, WindowListener {
 	 *            The maximum value in the set of curves
 	 */
 	public AIF(List<VoxelT2> AllVoxels) {
-		AIFValid = new ArrayList<VoxelT2>();
 		for (VoxelT2 v : AllVoxels)
 			// Make it maximum dependent
 			if (v.AIFValid)
 				AIFValid.add(v);
 
 		probAIFs = MathAIF.getAIFs(AIFValid);
-		if (!probAIFs.isEmpty())
-			AIF = MathAIF.getAIF(probAIFs, true);
-		else
-			AIF = new double[AllVoxels.get(0).contrastRaw.length];
+		doAIFCalculation(new AIFAutomaticCalculation(this,AllVoxels));
+	
 		
 		manager.addWindowListener(new WindowListener() {
 			public void windowActivated(WindowEvent arg0) {}
@@ -142,10 +139,6 @@ public class AIF implements ItemListener, WindowListener {
 		return probAIFs;
 	}
 
-	/*
-	 * public List<Voxel> getProbAIFsV() { return
-	 * (List<Voxel>)(List<?>)probAIFs; }
-	 */
 
 	/**
 	 * Permits to fit the AIF by using a fitter extended from {@link fitter}
@@ -195,7 +188,6 @@ public class AIF implements ItemListener, WindowListener {
 		manager.setName("AIF ROIs");
 		manager.runCommand("Show All");
 		manager.setVisible(true);
-		//manager.addWindowListener(this);
 	}
 
 	/**
@@ -229,27 +221,6 @@ public class AIF implements ItemListener, WindowListener {
 		AIFWindow = AIFChart.show();
 	}
 
-	/**
-	 * Implements the way for calculating AIF from a list of {@link VoxelT2}
-	 * 
-	 * @param voxels
-	 *            The {@link VoxelT2}
-	 */
-	public void manualCalc(List<VoxelT2> voxels) {
-		manager.setName("AIF ROIs");
-		manager.setVisible(true);
-		JOptionPane jo = new JOptionPane(
-				"Have you selected your own ROIs?\nSelect the ROIs you want to use"
-						+ " and click OK", JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.YES_NO_OPTION, null);
-
-		jo.setEnabled(true);
-		JDialog dialog2 = jo.createDialog("AIF Validation");
-
-		dialog2.setModalityType(ModalityType.DOCUMENT_MODAL);
-		dialog2.setVisible(true);
-		AIF = MathAIF.getAIF(voxelsROI(voxels), true);
-	}
 
 	public void itemStateChanged(ItemEvent e) {
 		jcb = (JCheckBox) e.getSource();
@@ -267,157 +238,14 @@ public class AIF implements ItemListener, WindowListener {
 		
 	}
 
-	/**
-	 * Implements a way for getting the voxels from a {@link Roi} selected by
-	 * the user using the {@link RoiManager}
-	 * 
-	 * @param allV
-	 *            The whole set of voxels within the {@link ImagePlus} where the
-	 *            user select the ROIs
-	 * @return The voxels selected by the user
-	 */
-	public List<VoxelT2> voxelsROI(List<VoxelT2> allV) {
-		List<VoxelT2> res = new ArrayList<VoxelT2>();
-		manager.setName("AIF ROIs");
-		// AIFSelect = manager;
-		Roi[] rois = manager.getRoisAsArray();
-		for (int i = 0; i < rois.length; i++) {
-			//int z2 =rois[i].getPosition()+1;
-			int z2 = manager.getSliceNumber(rois[i].getName());
-			if (z2 == -1)
-				z2 = 1;
-			int fromIn = -1, toIn = -1;
-			int[][] points = getPointsROI(rois[i]);
-
-			if (points[0].length > 1) {// Point case
-				// ///////////////////////////
-				for (int j = 0; fromIn == -1 && j < points[0].length; j++)
-					fromIn = allV.indexOf(VoxelT2.VoxelSearch(allV,
-							points[0][j], points[1][j], z2));
-
-				List<VoxelT2> subList = allV.subList(fromIn, allV.size() - 1);
-				for (int j = points[0].length - 1; toIn == -1 && j > 0; j--)
-					toIn = subList.indexOf(VoxelT2.VoxelSearch(subList,
-							points[0][j], points[1][j], z2));
-				// //////////////////////////////////////////
-
-				subList = subList.subList(0, toIn);
-				for (int j = 0; j < points[0].length; j++ /* Point p : points */) {
-
-					VoxelT2 v = VoxelT2.VoxelSearch(subList, points[0][j],
-							points[1][j], z2);
-					if (v != null)
-						res.add(v);
-				}
-
-			} else {
-				VoxelT2 v = VoxelT2.VoxelSearch(allV, points[0][0],
-						points[1][0], z2);
-				if (v != null)
-					res.add(v);
-			}
-		}
-		//probAIFs = res;
-		return res;
-
-	}
-
-	/**
-	 * Obtains the coordinates from voxels inside a {@link Roi}
-	 * 
-	 * @param roi
-	 * @return An array with the points inside the ROI
-	 */
-	public static int[][] getPointsROI(Roi roi) {
-		// TODO line case
-		int n = 0;
-		Rectangle r = roi.getBounds();
-		byte[] mask;
-
-		if (roi.getType() == Roi.RECTANGLE) {
-			mask = null;
-			n = r.width * r.height;
-		} else
-			mask = (byte[]) (roi.getMask().getPixels());
-
-		for (int j = 0; j < mask.length; j++) {
-			if (mask[j] != 0)
-				n++; // count points in mask
-		}
-
-		int[][] poin = new int[2][n];
-
-		/*
-		 * By the type is possible to know the Roi's shape,the multi-point ROI
-		 * is considered as well as a ROI type so is neccesary to restrict and
-		 * look for just one point
-		 */
-		if (roi.getType() == Roi.POINT && n == 1) {
-			poin[0][0] = r.x;
-			poin[1][0] = r.y;
-		} else {
-
-			int h = 0;
-			int z = 0;
-			for (int y = r.y; y < r.y + r.height; y++)
-				for (int x = r.x; x < r.x + r.width; x++) {
-					if (mask == null || (h < mask.length && mask[h] != 0)) {
-						poin[0][z] = x;
-						poin[1][z] = y;
-						// pointRes[z] = new Point(x,y);
-						z++;
-
-					}
-					h++;
-				}
-		}
-		return poin;
-	}
 	
-	/**
-	 * Set the AIF with the specified values in the file. CSV format.
-	 * 
-	 * @param f source file. One line with the values
-	 * @return true if everything goes well
-	 */
-	public boolean setAIFFromTxtFile(File f) {
-		String csvLimit = ",";
-		if (f.isFile()) {
-			try {
-				BufferedReader br = new BufferedReader(new FileReader(f));
-				String[] values = br.readLine().split(csvLimit);
-				double[] probAIF = new double[values.length];
-				for (int i = 0; i < values.length; i++) 
-					probAIF[i] = Double.parseDouble(values[i]);
-				
-				setAIF(probAIF);
-				return true; 
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				return false;
-			} catch (NumberFormatException nfe) {
-				nfe.printStackTrace();
-				return false;
-			} /*finally {
-				JOptionPane.showMessageDialog(new JFrame(),
-					    "The introduced AIF is incorrect",
-					    "AIF Error",
-					    JOptionPane.ERROR_MESSAGE);
-			}*/
-		} else {
-			return false;
-		}
+	/** Set {@link #AIF} from a user {@link AIFCalculator} **/
+	public void doAIFCalculation(AIFCalculator aifCalc) {
+		AIF = aifCalc.doAIFCalculation();
 	}
 	
 	
-	public boolean setAIFFromTxtFile(String s) {
-		return setAIFFromTxtFile(new File(s));
-	}
-
+	////////////////////Events////////////////////////////////////////////////////////
 	public void windowClosed(WindowEvent e) {
 		System.out.println("Closed");
 		manager.removeAll();
@@ -425,68 +253,6 @@ public class AIF implements ItemListener, WindowListener {
 		manager = null;
 	}
 	
-	public void AIFMethodSelector(final List <VoxelT2> voxels) {
-	
-				JPanel panel = new JPanel();
-				panel.setLayout(null);
-				JLabel label = new JLabel("Select your way");
-				label.setBounds(71, 11, 77, 23);
-				panel.add(label);
-				 jf = new JFrame();
-				jf.getContentPane().add(panel);
-				
-				JRadioButton AIFFromFile = new JRadioButton("AIF from a file");
-				AIFFromFile.setBounds(6, 67, 124, 23);
-				panel.add(AIFFromFile);
-				
-				final JRadioButton manualCalc = new JRadioButton("Manual Calculation");
-				manualCalc.setBounds(6, 41, 124, 23);
-				panel.add(manualCalc);
-				final ButtonGroup buttonGroup = new ButtonGroup();
-				buttonGroup.add(manualCalc);
-				buttonGroup.add(AIFFromFile);
-				jf.setLocationRelativeTo(null);
-				//jf.requestFocus();
-			
-				
-				JButton continueBtn = new JButton("Continue...");
-				continueBtn.addMouseListener(new MouseListener() {
-
-					public void mouseClicked(MouseEvent arg0) {
-						if (buttonGroup.getSelection() != null ) {
-							System.out.println("tocado");
-							if(manualCalc.isSelected()) {
-								System.out.println("Manual Calc");
-								manualCalc(voxels);
-								jf.dispose();
-							} else {
-								System.out.println("Intro from file");
-							}
-						} else {
-							System.out.println("No Tocado");
-						}
-						
-					}
-					public void mouseEntered(MouseEvent arg0) {}
-					public void mouseExited(MouseEvent arg0) {}
-					public void mousePressed(MouseEvent arg0) {}
-					public void mouseReleased(MouseEvent arg0) {}
-					
-				});
-
-				continueBtn.setBounds(113, 90, 89, 23);
-				panel.add(continueBtn);
-				jf.setSize(400, 200);
-				//jf.pack();
-				jf.setVisible(true);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-	}
 
 	private void voxelsAIFOverlay() {
 		Overlay overlay = EventUtils.createOverlay(probAIFs);
@@ -514,13 +280,14 @@ public class AIF implements ItemListener, WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 	}
 	
+
 	
 	
 	
 	public static void main (String args[]) {
 		AIF a = new AIF(new double[100]);
 		//a.AIFMethodSelector();
-		boolean b = a.setAIFFromTxtFile(("C:\\Users\\pmacias\\Documents\\pruebas\\prueba.db"));
+		//boolean b = a.setAIFFromTxtFile(("C:\\Users\\pmacias\\Documents\\pruebas\\prueba.db"));
 		
 		
 	}

@@ -53,20 +53,21 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	MainFrame mf;
 	String voxelModel = "T2";
 	EventUtils eu;
-	//Image a = getClass().getr
-	//ImageIcon continueIcon =  new ImageIcon("src/main/resources/continue-icon.png");
+	
 	
 	ImageIcon continueIcon =  new ImageIcon(
 	        JPerfusionTool_.class.getResource("/continue-icon.png"));
 	ImageIcon biigIcon =  new ImageIcon(JPerfusionTool_.class.getResource("/BIIG.png"));
 	ImageIcon questionIcon =  new ImageIcon(JPerfusionTool_.class.getResource("/Question_mark.png"));
+	AIF aifO;
+	/** Options for AIF Menu
+	 * Each new option needs a new AIFCalculator which must be indicated within calcAIF(n) method*/
+	public final Object[] AIFoptions = {"Semi-Manual Calculation","AIF from a text file","Cancel"};
 	
 			
 
 
 	public void run(ImageProcessor arg0) {
-	
-		
 		IJ.showStatus("Start");
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -147,7 +148,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		eu.turnOn();
 		////////////////AIF Calculation/////////////////////////
 
-		AIF aifO = new AIF(nonAllVoxels);
+		aifO = new AIF(nonAllVoxels);
 
 		mf.AIFVoxels.addItemListener(aifO);
 		
@@ -166,43 +167,24 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		dialog.setIconImage(biigIcon.getImage());
 
 		aifO.paint(hyStack);
-		
-		//final AIF aux = aifO;
+
 		
 		int b = 1;
 		do {
 			aifO.paintChart();
-			//aux.paintChart();
 			dialog.setVisible(true);
 			b = (Integer) jop.getValue();
 			if (b == 1) {
-				
-				Object[] options = {"Semi-Manual Calculation",
-	                    "AIF from a text file",
-	                    "Cancel"};
 				int n = JOptionPane.showOptionDialog(jop,
 					    "Choose your way: ",
 					    "AIF Calculation",
 					    JOptionPane.YES_NO_CANCEL_OPTION,
 					    JOptionPane.QUESTION_MESSAGE,
 					    this.continueIcon,
-					    options,
-					    options[2]);
-				if (n == 0 ) {
-					aifO.manualCalc(nonAllVoxels);
-					
-				} else if(n == 1) {
-					JFileChooser jfc = new JFileChooser();
-					jfc.showOpenDialog(new JFrame());
-					aifO.setAIFFromTxtFile(jfc.getSelectedFile());
-					
-				} 
-				
-						//aux.AIFMethodSelector(nonAllVoxels);
-				//aifO.manualCalc(nonAllVoxels);
+					    AIFoptions,
+					    AIFoptions[AIFoptions.length - 1]);
+				calcAIF(n);
 				aifO.setAIFfit(f);
-				//aux.setAIFfit(f);
-				//AIF = aux.getAIF();
 				AIF = aifO.getAIFfit();
 			}
 
@@ -225,7 +207,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		// ///pseudoinverse AIF///////////
 	
 		double[][] matrixPAIF = MathUtils.pInvMon( MathUtils.lowTriangular(AIF));
-		for (VoxelT2 v : nonAllVoxels) {
+		for (VoxelT2 v : nonAllVoxels){
 			v.setContrastEstim(matrixPAIF);
 			double aMax = StatUtils.max(v.contrastEstim) > FastMath
 					.abs(StatUtils.min(v.contrastEstim)) ? 1 : -1;
@@ -321,6 +303,21 @@ private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF ai
 		}
 	}
 
+	/*Neccesary to include here the correspondent number per each AIFOptions*/
+	private void calcAIF(int n) {
+		switch(n) {
+		case 0:
+			aifO.doAIFCalculation(new AIFManualSelection(aifO,nonAllVoxels ));
+			break;
+		case 1:
+			JFileChooser jfc = new JFileChooser();
+			jfc.showOpenDialog(new JFrame());
+			aifO.doAIFCalculation(new AIFFromTextFile(jfc.getSelectedFile()));
+			break;
+		}
+		
+	}
+	
 	private fitter getFitter(Object object) {
 		if (object == "Auto")
 			return new GammaFitterACM();
@@ -332,6 +329,7 @@ private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF ai
 			return new GammaFitterACM();
 		return null;
 	}
+	
 	
 	private Iterator<Voxel> getVoxelModel() {
 		return myHypStk.getIterator(voxelModel,mf.ThrField.getText(),mf.forceFake.getText());
