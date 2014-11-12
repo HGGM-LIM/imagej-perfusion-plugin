@@ -6,12 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -20,15 +21,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
-
 import ij.plugin.filter.PlugInFilter;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
@@ -339,5 +339,25 @@ private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF ai
 	public void actionPerformed(ActionEvent e) {
 		doIt();
 	}
+	
+	/*public static void main(String[] args) {
+		// set the plugins.dir property to make the plugin appear in the Plugins menu
+		Class<?> clazz = JPerfusionTool_.class;
+		URL main = clazz.getResource("JPerfusionTool_.class");
+		if (!"file".equalsIgnoreCase(main.getProtocol()))
+		  throw new IllegalStateException("GetDirectory class is not stored in a file.");
+		File path = new File(main.getPath()).getParentFile().getParentFile();
+		String pluginsDir = path.getAbsolutePath();
+		System.setProperty("plugins.dir", pluginsDir);
+
+		// start ImageJ
+		new ImageJ();
+
+		// open the Clown sample
+		ImagePlus image = IJ.openImage();
+		
+		// run the plugin
+		IJ.runPlugIn(clazz.getName(), "");
+	}*/
 
 }
