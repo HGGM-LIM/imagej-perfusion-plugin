@@ -22,8 +22,7 @@ public class vecToStack {
 	 * @param param
 	 *            Parameter to show
 	 */
-	public static void paintParametricMap(ImagePlus ip, List<VoxelT2> voxels,
-			String param) {
+	public static void paintParametricMap(ImagePlus ip, List<VoxelT2> voxels,String param) {
 		double parameter = 0;
 		int[] dim = ip.getDimensions();
 		
@@ -63,6 +62,7 @@ public class vecToStack {
 				+ size_z + ", \"" + units + "\")";
 		IJ.runMacro(vscomm);
 		IJ.run(res, "Enhance Contrast", "saturated=0.35");
+		res.setCalibration(cal);
 
 		res.show();
 		IJ.run("In [+]");

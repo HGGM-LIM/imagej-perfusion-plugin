@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Dialog.ModalityType;
-
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -25,12 +24,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
@@ -41,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.math3.stat.StatUtils;
+
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 
@@ -48,10 +48,10 @@ import javax.swing.JRadioButtonMenuItem;
  * AIF class contains the voxels used for Arterial Input Function calculation
  * and the fitted version. Also implements the methods for the AIF properties
  * visualitation
- * 
+ *
  * @author <a href="mailto:pedro.macias.gordaliza@gmail.com">Pedro Macías
  *         Gordaliza</a>
- * 
+ *
  */
 public class AIF implements ItemListener, WindowListener {
 	/*
@@ -71,7 +71,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Class constructor
-	 * 
+	 *
 	 * @param AllVoxels
 	 *            The selected voxels for calculating the AIF
 	 * @param max
@@ -85,24 +85,24 @@ public class AIF implements ItemListener, WindowListener {
 
 		probAIFs = MathAIF.getAIFs(AIFValid);
 		doAIFCalculation(new AIFAutomaticCalculation(this,AllVoxels));
-	
-		
+
+
 		manager.addWindowListener(new WindowListener() {
 			public void windowActivated(WindowEvent arg0) {}
 			public void windowClosed(WindowEvent arg0) {
-				jcb.setSelected(false);	
+				jcb.setSelected(false);
 			}
 			public void windowClosing(WindowEvent arg0) {}
 			public void windowDeactivated(WindowEvent arg0) {}
 			public void windowDeiconified(WindowEvent arg0) {}
 			public void windowIconified(WindowEvent arg0) {}
 			public void windowOpened(WindowEvent arg0) {}
-		}); 
+		});
 	}
 
 	/**
 	 * Class constructor, permits to create an AIF directly from the values
-	 * 
+	 *
 	 * @param values
 	 *            new values for the AIF to be considered.
 	 */
@@ -113,7 +113,7 @@ public class AIF implements ItemListener, WindowListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return AIF values
 	 */
 	public double[] getAIF() {
@@ -122,7 +122,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Change the AIF values using the parameter
-	 * 
+	 *
 	 * @param AIF
 	 *            new AIF values
 	 */
@@ -132,7 +132,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Get for the voxels whit AIF properties
-	 * 
+	 *
 	 * @return probAIFs
 	 */
 	public List<VoxelT2> getProbAIFs() {
@@ -142,7 +142,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Permits to fit the AIF by using a fitter extended from {@link fitter}
-	 * 
+	 *
 	 * @param f
 	 *            The kind of {@link fitter}
 	 */
@@ -158,7 +158,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Return the values AIF fitted curve v
-	 * 
+	 *
 	 * @return AIFfit
 	 */
 	public double[] getAIFfit() {
@@ -168,12 +168,12 @@ public class AIF implements ItemListener, WindowListener {
 	/**
 	 * Draw the voxels used for the AIF calculation ( {@link #probAIFs} ) within
 	 * the {@link ImagePlus} selected
-	 * 
+	 *
 	 * @param image
 	 *            The {@link ImagePlus}
 	 */
 	public void paint(ImagePlus image) {
-		
+
 		for (VoxelT2 v : probAIFs) {
 			PointRoi pr = new PointRoi(v.x, v.y);
 			pr.setPosition(1, v.slice, 1);
@@ -192,7 +192,7 @@ public class AIF implements ItemListener, WindowListener {
 
 	/**
 	 * Displays the AIF calculated and its fitted version
-	 * 
+	 *
 	 */
 	public void paintChart() {
 		double[] x = new double[AIF.length];
@@ -229,22 +229,51 @@ public class AIF implements ItemListener, WindowListener {
 			manager.setVisible(true);
 
 		} else if (manager != null) {
-				
+
 				manager.runCommand("Select All");
 				manager.runCommand("Delete");
 				manager.setVisible(false);
 			}
-	
-		
+
+
 	}
 
-	
+
 	/** Set {@link #AIF} from a user {@link AIFCalculator} **/
 	public void doAIFCalculation(AIFCalculator aifCalc) {
 		AIF = aifCalc.doAIFCalculation();
 	}
-	
-	
+	/**
+	 *
+	 * @param file filepath
+	 * @param fit fit or fit version
+	 * @return successful
+	 */
+	public boolean saveAIF(String file, boolean fit) {
+		double[] vals;
+		if (fit)
+			vals = AIFfit;
+		else
+			vals = AIF;
+
+		 FileWriter bw;
+		try {
+			bw = new FileWriter(file);
+		 for(int i = 0; i < vals.length; i++)
+			 bw.write(Double.toString(vals[i]) + ",");
+		 bw.close();
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean saveAIF(String file) {
+		return saveAIF(file,true);
+	}
+
+
 	////////////////////Events////////////////////////////////////////////////////////
 	public void windowClosed(WindowEvent e) {
 		System.out.println("Closed");
@@ -252,7 +281,7 @@ public class AIF implements ItemListener, WindowListener {
 		manager.close();
 		manager = null;
 	}
-	
+
 
 	private void voxelsAIFOverlay() {
 		Overlay overlay = EventUtils.createOverlay(probAIFs);
@@ -279,16 +308,16 @@ public class AIF implements ItemListener, WindowListener {
 
 	public void windowDeactivated(WindowEvent e) {
 	}
-	
 
-	
-	
-	
+
+
+
+
 	public static void main (String args[]) {
 		AIF a = new AIF(new double[100]);
 		//a.AIFMethodSelector();
 		//boolean b = a.setAIFFromTxtFile(("C:\\Users\\pmacias\\Documents\\pruebas\\prueba.db"));
-		
-		
+
+
 	}
 }
