@@ -61,6 +61,7 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 	MainFrame mf;
 	String voxelModel = "T2";
 	EventUtils eu;
+	boolean autoMode;
 
 
 	ImageIcon continueIcon =  new ImageIcon(JPerfusionTool_.class.getResource("/continue-icon.png"));
@@ -76,39 +77,34 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 
 	public void run(ImageProcessor arg0) {
 		IJ.showStatus("Start");
-		System.out.println("Paso Run");
+		if (autoMode) {
+			doIt();
+		} else {
 
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					mf.setIconImage(JPerfusionTool_.this.biigIcon.getImage());
+					mf.setVisible(true);
+					mf.startButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							doIt();
+						}
+					});
+					mf.addWindowListener(new WindowListener() {
+						public void windowClosed(WindowEvent arg0) {
+							eu.turnOff();
+						}
+						public void windowActivated(WindowEvent arg0) {}
+						public void windowClosing(WindowEvent arg0) {}
+						public void windowDeactivated(WindowEvent arg0) {}
+						public void windowDeiconified(WindowEvent arg0) {}
+						public void windowIconified(WindowEvent arg0) {}
+						public void windowOpened(WindowEvent arg0) {}
+					});
 
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				//mf = new MainFrame();
-				mf.setIconImage(JPerfusionTool_.this.biigIcon.getImage());
-				mf.setVisible(true);
-
-		//mf.setVisible(true);
-		mf.startButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doIt();
-			}
-		});
-		mf.addWindowListener(new WindowListener() {
-
-			public void windowClosed(WindowEvent arg0) {
-				eu.turnOff();
-			}
-			public void windowActivated(WindowEvent arg0) {}
-			public void windowClosing(WindowEvent arg0) {}
-			public void windowDeactivated(WindowEvent arg0) {}
-			public void windowDeiconified(WindowEvent arg0) {}
-			public void windowIconified(WindowEvent arg0) {}
-			public void windowOpened(WindowEvent arg0) {}
-
-		});
-
-			}
-		});
+				}
+			});
+		}
 	}
 
 	private void doIt() {
@@ -167,8 +163,8 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 		if (aifO.getAIFfit() != null)
 			AIF = aifO.getAIFfit();
 
-		JOptionPane jop = new JOptionPane("               Is the AIF valid?",
-				JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
+		if(!autoMode) {
+		JOptionPane jop = new JOptionPane("               Is the AIF valid?",JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_OPTION, null);
 		jop.setIcon(this.questionIcon);
 
 		JDialog dialog = jop.createDialog("AIF Validation");
@@ -184,20 +180,15 @@ public class JPerfusionTool_ implements PlugInFilter, ActionListener {
 			dialog.setVisible(true);
 			b = (Integer) jop.getValue();
 			if (b == 1) {
-				int n = JOptionPane.showOptionDialog(jop,
-					    "Choose your way: ",
-					    "AIF Calculation",
-					    JOptionPane.YES_NO_CANCEL_OPTION,
-					    JOptionPane.QUESTION_MESSAGE,
-					    this.continueIcon,
-					    AIFoptions,
-					    AIFoptions[AIFoptions.length - 1]);
+				int n = JOptionPane.showOptionDialog(jop,"Choose your way: ","AIF Calculation",JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE,this.continueIcon,AIFoptions,AIFoptions[AIFoptions.length - 1]);
 				calcAIF(n);
 				aifO.setAIFfit(f);
 				AIF = aifO.getAIFfit();
 			}
 
 		} while (b == 1);
+		}
 
 		if(mf.saveAIF.isSelected())
 			aifO.saveAIF(hyStack.getOriginalFileInfo().directory+hyStack.getShortTitle()+new SimpleDateFormat("_yyyyMMdd-HHmmss").format(new Date())+".csv");
@@ -291,6 +282,8 @@ private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF ai
 		} else {
 			//String params = Macro.getOptions();
 			MainFrame.setParams(Macro.getOptions());
+			autoMode = MainFrame.getMode();
+			System.out.println(autoMode);
 			mf = new MainFrame();
 			hyStack = arg1;
 			return DOES_ALL + STACK_REQUIRED;
@@ -353,6 +346,7 @@ private void AIFMethodSelector(/*JDialog dialog,JOptionPane jop,fitter f, AIF ai
 
 		// run the plugin
 		//IJ.run(image, "JPerfusionTool ", "ShowContrast=False,ShowAIFVoxels=True,SaveFileAIF=False,ThrRel=0.75,ForceFit=1");
+		IJ.run(image, "JPerfusionTool ", "AutoMode=True, ShowContrast=False, ShowAIFVoxels=True, SaveFileAIF=False, ThrRel=0.75,ForceFit=1 ");
 		//IJ.run(image, "JPerfusionTool ", "ShowContrast=False,ShowAIFVoxels=True,SaveFileAIF=True,ThrRel=1,ForceFit=0.25"); //default
 		//IJ.runPlugIn(clazz.getName(), "False,True,False,0.75,1");
 

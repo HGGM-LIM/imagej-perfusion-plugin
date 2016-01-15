@@ -44,6 +44,7 @@ public class MainFrame extends JFrame {
 	public static final String Save_File_AIF  = "savefileaif";
 	public static final String Thr_Rel  = "thrrel";
 	public static final String Force_Fit  = "forcefit";
+	public static final String Auto_Mode  = "automode";
 
 	private static final long serialVersionUID = -3008152621433346520L;
 	protected JComboBox comboFitting;
@@ -64,6 +65,7 @@ public class MainFrame extends JFrame {
 		put(Save_File_AIF, "True");
 		put(Thr_Rel, "1");
 		put(Force_Fit , "0.25");
+		put(Auto_Mode, "False");
 		}
 	};
 
@@ -221,11 +223,15 @@ public class MainFrame extends JFrame {
 		if(params!= null) {
 		String[] splParams = params.split(",");
 		for(String param : splParams) {
-			String[] isolParam = param.split("=");
+			String[] isolParam = param.replaceAll("\\s+","").split("=");
 			if(PARAMS.containsKey(isolParam[0].toLowerCase()))
 				PARAMS.put(isolParam[0].toLowerCase(), isolParam[1]);
 		}
 		}
+	}
+	
+	public static boolean getMode() {
+		return PARAMS.get(Auto_Mode).equalsIgnoreCase("true");
 	}
 
 }
